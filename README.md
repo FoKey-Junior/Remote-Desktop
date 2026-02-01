@@ -2,7 +2,7 @@
 
 <!-- Баннер с ограниченной шириной -->
 <p align="center">
-  <img src="https://github.com/FoKey-Junior/Remote-Desktop/blob/main/assets/background.jpg?raw=true" width="600"/>
+  <img src="https://github.com/FoKey-Junior/Remote-Desktop/blob/main/assets/background.jpg?raw=true" width="300"/>
 </p>
 
 > ⚠️ Проект в разработке  
