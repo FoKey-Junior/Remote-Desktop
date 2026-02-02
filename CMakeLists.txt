@@ -5,10 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# ===== Boost (CONFIG mode, Nix-style) =====
-find_package(Boost CONFIG REQUIRED COMPONENTS system)
+find_package(Boost 1.87 REQUIRED COMPONENTS system)
 
-# ===== libsodium =====
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SODIUM REQUIRED libsodium)
 
@@ -18,11 +16,14 @@ add_executable(remote_desktop
 )
 
 target_include_directories(remote_desktop PRIVATE
+        ${Boost_INCLUDE_DIRS}
         ${SODIUM_INCLUDE_DIRS}
 )
+
 
 target_link_libraries(remote_desktop PRIVATE
         Boost::system
         ${SODIUM_LIBRARIES}
+        /nix/store/3d0pz2rax1v3b05lwjqlm4zi6dklnhs5-libsodium-1.0.20/lib/libsodium.so
         pthread
 )

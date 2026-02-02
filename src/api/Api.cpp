@@ -19,8 +19,8 @@ void Api::start_server() {
         acceptor.accept(socket);
         std::cout << "server accepted" << std::endl;
 
-        std::thread{[q = std::move(socket)]() mutable {
-            boost::beast::websocket::stream<tcp::socket> ws {std::move(q)};
+        std::thread{[q {std::move(socket)}]() mutable {
+            boost::beast::websocket::stream<tcp::socket> ws {std::move(const_cast<tcp::socket&>(q))};
             ws.accept();
 
             while (true) {
