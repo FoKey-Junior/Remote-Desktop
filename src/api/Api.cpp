@@ -12,7 +12,7 @@ namespace http  = beast::http;
 namespace net   = boost::asio;
 using tcp = net::ip::tcp;
 
-Api::Api() {
+void Api::start_server() {
     try {
         net::io_context ioc;
 

@@ -17,6 +17,8 @@ pkg_check_modules(SODIUM REQUIRED libsodium)
 add_executable(Remote_Desktop
         src/main.cpp
         src/api/Api.cpp
+        src/api/registration.cpp
+        src/api/authorization.cpp
 )
 
 add_library(Sodium::Sodium INTERFACE IMPORTED)
