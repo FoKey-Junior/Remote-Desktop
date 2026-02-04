@@ -1,6 +1,6 @@
-#include "../include/api/Api.h"
+#include "../include/api/Api.hpp"
 
 int main() {
     Api api;
-    api.start_server();
+    api.start_server(4000);
 }

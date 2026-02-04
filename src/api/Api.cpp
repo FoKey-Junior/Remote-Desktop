@@ -1,18 +1,19 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
 #include <boost/asio.hpp>
 #include <iostream>
 
-#include "../../include/api/Api.h"
+#include "../../include/api/Api.hpp"
 
 
 namespace beast = boost::beast;
 namespace http  = beast::http;
 namespace net   = boost::asio;
-using tcp = net::ip::tcp;
+using tcp       = net::ip::tcp;
 
-void Api::start_server() {
+void Api::start_server(int port_) {
+    port = port_;
+
     try {
         net::io_context ioc;
 
@@ -21,7 +22,7 @@ void Api::start_server() {
             {tcp::v4(), 8080}
         };
 
-        std::cout << "HTTP server started on port 8080\n";
+        std::cout << "HTTP server started on port " << port << std::endl;
 
         for (;;) {
             tcp::socket socket{ioc};
@@ -38,7 +39,7 @@ void Api::start_server() {
 
             res.set(http::field::server, "Boost.Beast");
             res.set(http::field::content_type, "text/plain");
-            res.body() = "Hello from Boost.Beast!";
+            res.body() = "server working";
             res.prepare_payload();
 
             http::write(socket, res);

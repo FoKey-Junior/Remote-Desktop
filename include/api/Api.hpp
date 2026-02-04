@@ -3,8 +3,10 @@
 
 
 class Api {
+    int port = 4000;
+
 public:
-    static void start_server();
+    void start_server(int port_);
 };
 
 
