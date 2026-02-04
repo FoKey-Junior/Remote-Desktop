@@ -1,35 +1,50 @@
-#include "../../include/api/Api.h"
 #include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/asio.hpp>
 #include <iostream>
-#include <thread>
-#include <string>
 
-using tcp = boost::asio::ip::tcp;
+#include "../../include/api/Api.h"
 
-void Api::start_server() {
-    auto const address = boost::asio::ip::make_address("127.0.0.1");
-    auto const port = static_cast<unsigned short>(std::atoi("4000"));
 
-    boost::asio::io_context ioc(1);
-    tcp::acceptor acceptor(ioc, {address, port});
+namespace beast = boost::beast;
+namespace http  = beast::http;
+namespace net   = boost::asio;
+using tcp = net::ip::tcp;
 
-    while (true) {
-        tcp::socket socket(ioc);
-        acceptor.accept(socket);
-        std::cout << "server accepted" << std::endl;
+Api::Api() {
+    try {
+        net::io_context ioc;
 
-        std::thread{[q {std::move(socket)}]() mutable {
-            boost::beast::websocket::stream<tcp::socket> ws {std::move(const_cast<tcp::socket&>(q))};
-            ws.accept();
+        tcp::acceptor acceptor{
+            ioc,
+            {tcp::v4(), 8080}
+        };
 
-            while (true) {
-                boost::beast::flat_buffer buffer;
-                ws.read(buffer);
+        std::cout << "HTTP server started on port 8080\n";
 
-                auto out = boost::beast::buffers_to_string(buffer.cdata());
-                std::cout << out << std::endl;
-            }
-        }}.detach();
+        for (;;) {
+            tcp::socket socket{ioc};
+            acceptor.accept(socket);
+
+            beast::flat_buffer buffer;
+            http::request<http::string_body> req;
+            http::read(socket, buffer, req);
+
+            http::response<http::string_body> res{
+                http::status::ok,
+                req.version()
+            };
+
+            res.set(http::field::server, "Boost.Beast");
+            res.set(http::field::content_type, "text/plain");
+            res.body() = "Hello from Boost.Beast!";
+            res.prepare_payload();
+
+            http::write(socket, res);
+            socket.shutdown(tcp::socket::shutdown_send);
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
     }
 }

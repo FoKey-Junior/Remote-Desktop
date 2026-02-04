@@ -1,29 +1,32 @@
 cmake_minimum_required(VERSION 3.25)
-project(remote_desktop LANGUAGES CXX)
+cmake_policy(SET CMP0167 NEW)
+
+project(Remote_Desktop LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Boost 1.87 REQUIRED COMPONENTS system)
+# ---- Boost (headers only) ----
+find_package(Boost CONFIG REQUIRED)
 
+# ---- libsodium ----
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SODIUM REQUIRED libsodium)
 
-add_executable(remote_desktop
+add_executable(Remote_Desktop
         src/main.cpp
         src/api/Api.cpp
 )
 
-target_include_directories(remote_desktop PRIVATE
-        ${Boost_INCLUDE_DIRS}
-        ${SODIUM_INCLUDE_DIRS}
+add_library(Sodium::Sodium INTERFACE IMPORTED)
+set_target_properties(Sodium::Sodium PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${SODIUM_INCLUDE_DIRS}"
+        INTERFACE_LINK_LIBRARIES      "${SODIUM_LIBRARIES}"
+        INTERFACE_LINK_DIRECTORIES    "${SODIUM_LIBRARY_DIRS}"
 )
 
-
-target_link_libraries(remote_desktop PRIVATE
-        Boost::system
-        ${SODIUM_LIBRARIES}
-        /nix/store/3d0pz2rax1v3b05lwjqlm4zi6dklnhs5-libsodium-1.0.20/lib/libsodium.so
-        pthread
+target_link_libraries(Remote_Desktop PRIVATE
+        Boost::boost
+        Sodium::Sodium
 )
