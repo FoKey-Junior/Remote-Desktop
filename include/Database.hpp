@@ -3,7 +3,7 @@
 
 
 class Database {
-    void connect();
+    Database();
 };
 
 
