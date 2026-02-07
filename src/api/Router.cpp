@@ -12,7 +12,7 @@ void Router::start_server(int port_server_) {
         return "The server is working properly";
     });
 
-    CROW_ROUTE(app, "/api/add_json").methods("POST"_method)([](const crow::request& req) { 
+    CROW_ROUTE(app, "/api/registration").methods("POST"_method)([](const crow::request& req) { 
         auto x = crow::json::load(req.body);
 
         if (!x)

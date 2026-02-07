@@ -21,6 +21,7 @@ set(SOURCES
         src/api/registration.cpp
         src/api/authorization.cpp
         src/Database.cpp
+        src/StringUtils.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})
