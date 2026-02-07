@@ -2,7 +2,11 @@
 #define REMOTE_DESKTOP_AUTHORIZATION_H
 
 
-class authorization {
+#include <string>
+
+class Authorization {
+public:
+
 };
 
 

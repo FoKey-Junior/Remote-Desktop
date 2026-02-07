@@ -7,28 +7,27 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# ---- Boost (headers only) ----
-find_package(Boost CONFIG REQUIRED)
+set(CMAKE_PREFIX_PATH "/opt/homebrew/opt/boost" "/opt/homebrew/opt/libsodium" "/opt/homebrew/opt/libpqxx")
+set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/lib/pkgconfig:$ENV{PKG_CONFIG_PATH}")
 
-# ---- libsodium ----
+find_package(Boost REQUIRED)
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(SODIUM REQUIRED libsodium)
+pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
+pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
 
-add_executable(Remote_Desktop
+set(SOURCES
         src/main.cpp
-        src/api/Api.cpp
+        src/api/Router.cpp
         src/api/registration.cpp
         src/api/authorization.cpp
+        src/Database.cpp
 )
 
-add_library(Sodium::Sodium INTERFACE IMPORTED)
-set_target_properties(Sodium::Sodium PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${SODIUM_INCLUDE_DIRS}"
-        INTERFACE_LINK_LIBRARIES      "${SODIUM_LIBRARIES}"
-        INTERFACE_LINK_DIRECTORIES    "${SODIUM_LIBRARY_DIRS}"
-)
+add_executable(Remote_Desktop ${SOURCES})
+target_include_directories(Remote_Desktop PRIVATE include)
 
 target_link_libraries(Remote_Desktop PRIVATE
         Boost::boost
-        Sodium::Sodium
+        PkgConfig::SODIUM
+        PkgConfig::PQXX
 )

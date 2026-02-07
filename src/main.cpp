@@ -1,6 +1,6 @@
-#include "../include/api/Api.hpp"
+#include "../include/api/Router.hpp"
 
 int main() {
-    Api api;
-    api.start_server(4000);
+    Router router;
+    router.start_server(4000);
 }
