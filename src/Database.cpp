@@ -20,12 +20,12 @@ bool Database::add_row(const std::vector<std::string>& data) {
 
     pqxx::work db(connect);
 
-    pqxx::result r = db.exec(
+    pqxx::result r = db.exec_params(
         "INSERT INTO users (email, password) "
         "VALUES ($1, $2) "
         "ON CONFLICT (email) DO NOTHING "
         "RETURNING id;",
-        pqxx::params{ data[0], data[1] }
+        data[0], data[1]
     );
 
     db.commit();
@@ -35,9 +35,9 @@ bool Database::add_row(const std::vector<std::string>& data) {
 
 bool Database::uniqueness_check(const std::string& email) {
     pqxx::work db(connect);
-    pqxx::result r = db.exec(
+    pqxx::result r = db.exec_params(
         "SELECT 1 FROM users WHERE email = $1 LIMIT 1",
-        pqxx::params{email}
+        email
     );
 
     return r.empty();
@@ -45,9 +45,9 @@ bool Database::uniqueness_check(const std::string& email) {
 
 bool Database::get_password_hash(const std::string& email, std::string& out_hash) {
     pqxx::work db(connect);
-    pqxx::result r = db.exec(
+    pqxx::result r = db.exec_params(
         "SELECT password FROM users WHERE email = $1 LIMIT 1",
-        pqxx::params{email}
+        email
     );
 
     if (r.empty()) {
