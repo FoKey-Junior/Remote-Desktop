@@ -29,6 +29,7 @@ find_package(nlohmann_json CONFIG QUIET)
 find_package(Crow CONFIG QUIET)
 find_package(libpqxx CONFIG QUIET)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
+include(FetchContent)
 if (USE_SYSTEM_PQXX)
     if (libpqxx_FOUND)
         set(PQXX_TARGET libpqxx::pqxx)
@@ -60,8 +61,6 @@ set(SOURCES
 
 add_executable(Remote_Desktop ${SOURCES})
 target_include_directories(Remote_Desktop PRIVATE include)
-
-include(FetchContent)
 
 if (jwt-cpp_FOUND)
     set(JWT_TARGET jwt-cpp::jwt-cpp)
