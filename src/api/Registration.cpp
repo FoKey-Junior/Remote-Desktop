@@ -14,7 +14,7 @@ Registration::Registration(const std::vector<std::string>& data_user) {
     }
 
     for (const std::string& input : data_user) {
-        if (auto error = length_check(input, 8, 25)) {
+        if (auto error = length_check(input, 8, 64)) {
             response = *error;
             return;
         }

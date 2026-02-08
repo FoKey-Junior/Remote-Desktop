@@ -14,16 +14,10 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
     }
 
     for (const std::string& input : data_user) {
-        if (auto error = length_check(input, 8, 25)) {
+        if (auto error = length_check(input, 8, 64)) {
             response = *error;
             return;
         }
-    }
-
-    Database database("dbname=postgres user=postgres password=1234 hostaddr=127.0.0.1 port=5438");
-    if (!database.uniqueness_check(data_user[0])) {
-        response = "Пользователь с таким именем уже существует";
-        return;
     }
 
     if (sodium_init() < 0) {
@@ -31,21 +25,21 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
         return;
     }
 
-    char hashed_password[crypto_pwhash_STRBYTES];
-    if (crypto_pwhash_str(
-            hashed_password,
-            data_user[1].c_str(),
-            data_user[1].size(),
-            crypto_pwhash_OPSLIMIT_INTERACTIVE,
-            crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
-        response = "Ошибка хеширования пароля";
+    std::string stored_hash;
+    Database database("dbname=postgres user=postgres password=1234 hostaddr=127.0.0.1 port=5438");
+
+    if (!database.get_password_hash(data_user[0], stored_hash)) {
+        response = "Пользователь с таким именем не существует";
         return;
     }
 
-    std::vector<std::string> data_hashed = data_user;
-    data_hashed[1] = hashed_password;
+    if (crypto_pwhash_str_verify(
+            stored_hash.c_str(),
+            data_user[1].c_str(),
+            data_user[1].size()) != 0) {
+        response = "Неверный пароль";
+        return;
+    }
 
-    database.add_row(data_hashed);
-    response = "Новый пользователь был создан";
+    response = "Вы вошли в аккаунт";
 }
-

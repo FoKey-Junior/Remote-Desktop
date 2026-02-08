@@ -10,9 +10,10 @@ class Database {
     pqxx::connection connect;
 
 public:
-    Database(const std::string& connection_data_);
-    bool add_row(const std::vector<std::string>& data_);
-    bool uniqueness_check(const std::string& login_);
+    Database(const std::string& connection_data);
+    bool add_row(const std::vector<std::string>& data);
+    bool uniqueness_check(const std::string& login);
+    bool get_password_hash(const std::string& login, std::string& out_hash);
 };
 
 

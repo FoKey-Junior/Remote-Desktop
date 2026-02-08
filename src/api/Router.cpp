@@ -1,8 +1,10 @@
 #include "crow.h"
 #include <vector>
 #include <string>
+
 #include "../../include/api/Router.hpp"
 #include "../../include/api/Registration.hpp" 
+#include "../../include/api/Authorization.hpp"
 
 void Router::start_server(int port_server_) {
     port_server = port_server_;
@@ -36,8 +38,8 @@ void Router::start_server(int port_server_) {
         std::string password = x["password"].s();
         std::vector<std::string> data_user = {login, password};
 
-        Registration registration(data_user);
-        return crow::response{registration.get_response()};
+        Authorization authorization(data_user);
+        return crow::response{authorization.get_response()};
     });
 
 
