@@ -26,5 +26,20 @@ void Router::start_server(int port_server_) {
         return crow::response{registration.get_response()};
     });
 
+    CROW_ROUTE(app, "/api/authorization").methods("POST"_method)([](const crow::request& req) { 
+        auto x = crow::json::load(req.body);
+
+        if (!x)
+            return crow::response(400);
+
+        std::string login = x["login"].s();
+        std::string password = x["password"].s();
+        std::vector<std::string> data_user = {login, password};
+
+        Registration registration(data_user);
+        return crow::response{registration.get_response()};
+    });
+
+
     app.port(port_server).run();
 }

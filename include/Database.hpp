@@ -11,9 +11,8 @@ class Database {
 
 public:
     Database(const std::string& connection_data_);
-    ~Database();
     bool add_row(const std::vector<std::string>& data_);
-    void delete_row(int id_);
+    bool uniqueness_check(const std::string& login_);
 };
 
 

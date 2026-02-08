@@ -14,11 +14,7 @@ Database::Database(const std::string& connection_data_) : connect(connection_dat
     }
 }
 
-Database::~Database() {
-}
-
-bool Database::add_row(const std::vector<std::string>& data_)
-{
+bool Database::add_row(const std::vector<std::string>& data_) {
     if (data_.size() < 2)
         throw std::invalid_argument("Not enough data");
 
@@ -37,6 +33,12 @@ bool Database::add_row(const std::vector<std::string>& data_)
     return !r.empty();
 }
 
-void Database::delete_row(int id_) {
+bool Database::uniqueness_check(const std::string& login_) {
+    pqxx::work db(connect);
+    pqxx::result r = db.exec(
+        "SELECT 1 FROM users WHERE login = $1 LIMIT 1",
+        pqxx::params{login_}
+    );
 
+    return r.empty();
 }

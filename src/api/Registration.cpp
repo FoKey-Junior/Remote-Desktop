@@ -1,11 +1,11 @@
-#include "../../include/api/Registration.hpp"
-#include "../../include/Database.hpp"
-#include "../../include/StringUtils.hpp"
+#include <sodium.h>
 #include <iostream>
 #include <string>
 #include <vector>
 
-using namespace std;
+#include "../../include/api/Registration.hpp"
+#include "../../include/Database.hpp"
+#include "../../include/StringUtils.hpp"
 
 Registration::Registration(const std::vector<std::string>& data_user) {
     if (auto error = email_check(data_user[0])) {
@@ -21,8 +21,30 @@ Registration::Registration(const std::vector<std::string>& data_user) {
     }
 
     Database database("dbname=postgres user=postgres password=1234 hostaddr=127.0.0.1 port=5438");
-    database.add_row(data_user);
+    if (!database.uniqueness_check(data_user[0])) {
+        response = "Пользователь с таким именем уже существует";
+        return;
+    }
 
+    if (sodium_init() < 0) {
+        response = "Ошибка инициализации криптобиблиотеки";
+        return;
+    }
+
+    char hashed_password[crypto_pwhash_STRBYTES];
+    if (crypto_pwhash_str(
+            hashed_password,
+            data_user[1].c_str(),
+            data_user[1].size(),
+            crypto_pwhash_OPSLIMIT_INTERACTIVE,
+            crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
+        response = "Ошибка хеширования пароля";
+        return;
+    }
+
+    std::vector<std::string> data_hashed = data_user;
+    data_hashed[1] = hashed_password;
+
+    database.add_row(data_hashed);
     response = "Новый пользователь был создан";
 }
-

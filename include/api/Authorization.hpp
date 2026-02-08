@@ -3,10 +3,14 @@
 
 
 #include <string>
+#include <vector>
 
 class Authorization {
-public:
+  std::string response;
 
+  public:
+  Authorization(const std::vector<std::string>& data_user);
+  std::string get_response() { return response; };
 };
 
 
