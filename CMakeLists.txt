@@ -25,8 +25,14 @@ find_package(PkgConfig REQUIRED)
 find_package(jwt-cpp CONFIG QUIET)
 find_package(nlohmann_json CONFIG QUIET)
 find_package(Crow CONFIG QUIET)
+find_package(libpqxx CONFIG QUIET)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
-pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
+if (libpqxx_FOUND)
+    set(PQXX_TARGET libpqxx::pqxx)
+else()
+    pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
+    set(PQXX_TARGET PkgConfig::PQXX)
+endif()
 if (NOT jwt-cpp_FOUND)
     pkg_check_modules(JWT QUIET IMPORTED_TARGET jwt)
 endif()
@@ -85,5 +91,5 @@ target_link_libraries(Remote_Desktop PRIVATE
         ${JWT_TARGET}
         Crow::Crow
         PkgConfig::SODIUM
-        PkgConfig::PQXX
+        ${PQXX_TARGET}
 )
