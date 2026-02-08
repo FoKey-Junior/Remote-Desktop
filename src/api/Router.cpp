@@ -20,9 +20,9 @@ void Router::start_server(int port_server_) {
         if (!x)
             return crow::response(400);
 
-        std::string login = x["login"].s();
+        std::string email = x["email"].s();
         std::string password = x["password"].s();
-        std::vector<std::string> data_user = {login, password};
+        std::vector<std::string> data_user = {email, password};
 
         Registration registration(data_user);
         return crow::response{registration.get_response()};
@@ -34,9 +34,9 @@ void Router::start_server(int port_server_) {
         if (!x)
             return crow::response(400);
 
-        std::string login = x["login"].s();
+        std::string email = x["email"].s();
         std::string password = x["password"].s();
-        std::vector<std::string> data_user = {login, password};
+        std::vector<std::string> data_user = {email, password};
 
         Authorization authorization(data_user);
         return crow::response{authorization.get_response()};

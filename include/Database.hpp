@@ -12,8 +12,8 @@ class Database {
 public:
     Database(const std::string& connection_data);
     bool add_row(const std::vector<std::string>& data);
-    bool uniqueness_check(const std::string& login);
-    bool get_password_hash(const std::string& login, std::string& out_hash);
+    bool uniqueness_check(const std::string& email);
+    bool get_password_hash(const std::string& email, std::string& out_hash);
 };
 
 
