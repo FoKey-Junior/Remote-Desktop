@@ -24,6 +24,7 @@ find_package(Boost REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(jwt-cpp CONFIG QUIET)
 find_package(nlohmann_json CONFIG QUIET)
+find_package(Crow CONFIG QUIET)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
 pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
 if (NOT jwt-cpp_FOUND)
@@ -67,10 +68,22 @@ if (NOT nlohmann_json_FOUND)
     FetchContent_MakeAvailable(nlohmann_json)
 endif()
 
+if (NOT Crow_FOUND)
+    set(CROW_BUILD_EXAMPLES OFF)
+    set(CROW_BUILD_TESTS OFF)
+    FetchContent_Declare(
+            crow
+            GIT_REPOSITORY https://github.com/CrowCpp/Crow.git
+            GIT_TAG master
+    )
+    FetchContent_MakeAvailable(crow)
+endif()
+
 target_link_libraries(Remote_Desktop PRIVATE
         Boost::boost
         nlohmann_json::nlohmann_json
         ${JWT_TARGET}
+        Crow::Crow
         PkgConfig::SODIUM
         PkgConfig::PQXX
 )
