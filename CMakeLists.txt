@@ -93,3 +93,6 @@ target_link_libraries(Remote_Desktop PRIVATE
         PkgConfig::SODIUM
         ${PQXX_TARGET}
 )
+
+# Some distro libpqxx builds lack std::source_location symbols; disable to avoid link errors.
+target_compile_definitions(Remote_Desktop PRIVATE PQXX_DISABLE_SOURCE_LOCATION)
