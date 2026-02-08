@@ -5,9 +5,11 @@ endif()
 
 project(Remote_Desktop LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard to use")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+option(USE_SYSTEM_PQXX "Use system libpqxx instead of building from source" ON)
 
 if (APPLE)
     list(APPEND CMAKE_PREFIX_PATH
@@ -27,11 +29,21 @@ find_package(nlohmann_json CONFIG QUIET)
 find_package(Crow CONFIG QUIET)
 find_package(libpqxx CONFIG QUIET)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
-if (libpqxx_FOUND)
-    set(PQXX_TARGET libpqxx::pqxx)
+if (USE_SYSTEM_PQXX)
+    if (libpqxx_FOUND)
+        set(PQXX_TARGET libpqxx::pqxx)
+    else()
+        pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
+        set(PQXX_TARGET PkgConfig::PQXX)
+    endif()
 else()
-    pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
-    set(PQXX_TARGET PkgConfig::PQXX)
+    FetchContent_Declare(
+            libpqxx
+            GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+            GIT_TAG 7.8.1
+    )
+    FetchContent_MakeAvailable(libpqxx)
+    set(PQXX_TARGET pqxx)
 endif()
 if (NOT jwt-cpp_FOUND)
     pkg_check_modules(JWT QUIET IMPORTED_TARGET jwt)
