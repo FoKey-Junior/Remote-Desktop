@@ -1,3 +1,4 @@
+#include <jwt-cpp/jwt.h>
 #include <sodium.h>
 #include <iostream>
 #include <string>
@@ -40,6 +41,12 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
         response = "Неверный пароль";
         return;
     }
+
+    auto token = jwt::create()
+    .set_type("JWS")
+    .set_issuer("auth0")
+    .set_payload_claim("sample", jwt::claim(std::string("test")))
+    .sign(jwt::algorithm::hs256{"secret"});
 
     response = "Вы вошли в аккаунт";
 }
