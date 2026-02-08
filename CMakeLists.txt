@@ -33,8 +33,8 @@ endif()
 set(SOURCES
         src/main.cpp
         src/api/Router.cpp
-        src/api/registration.cpp
-        src/api/authorization.cpp
+        src/api/Registration.cpp
+        src/api/Authorization.cpp
         src/Database.cpp
         src/StringUtils.cpp
 )
