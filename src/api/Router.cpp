@@ -42,6 +42,23 @@ void Router::start_server(int port_server_) {
         return crow::response{authorization.get_response()};
     });
 
+    CROW_ROUTE(app, "/api/send_command").methods("POST"_method)([](const crow::request& req) { 
+        auto x = crow::json::load(req.body);
+
+        if (!x)
+            return crow::response(400);
+        
+        return crow::response{x};
+    });
+
+    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([](const crow::request& req) { 
+        auto x = crow::json::load(req.body);
+
+        if (!x)
+            return crow::response(400);
+        
+        return crow::response{x};
+    });
 
     app.port(port_server).run();
 }
