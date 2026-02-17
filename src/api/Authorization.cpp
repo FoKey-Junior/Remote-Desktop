@@ -27,7 +27,7 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
     }
 
     std::string stored_hash;
-    Database database("dbname=postgres user=postgres password=1234 hostaddr=127.0.0.1 port=5438");
+    Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
 
     if (!database.get_password_hash(data_user[0], stored_hash)) {
         response = "Пользователь с таким именем не существует";
@@ -40,7 +40,7 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
             data_user[1].size()) != 0) {
         response = "Неверный пароль";
         return;
-    }
+            }
 
     auto token = jwt::create()
     .set_type("JWS")
