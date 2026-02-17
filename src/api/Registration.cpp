@@ -20,7 +20,7 @@ Registration::Registration(const std::vector<std::string>& data_user) {
         }
     }
 
-    Database database("dbname=postgres user=postgres password=1234 hostaddr=127.0.0.1 port=5438");
+    Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
     if (!database.uniqueness_check(data_user[0])) {
         response = "Пользователь с таким именем уже существует";
         return;
@@ -40,7 +40,7 @@ Registration::Registration(const std::vector<std::string>& data_user) {
             crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
         response = "Ошибка хеширования пароля";
         return;
-    }
+            }
 
     std::vector<std::string> data_hashed = data_user;
     data_hashed[1] = hashed_password;
