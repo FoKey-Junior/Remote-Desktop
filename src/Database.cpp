@@ -21,7 +21,7 @@ bool Database::add_row(const std::vector<std::string>& data) {
     pqxx::work db(connect);
 
     pqxx::result r = db.exec_params(
-        "INSERT INTO users (email, password_hash) "
+        "INSERT INTO user_accounts (email, password_hash) "
         "VALUES ($1, $2) "
         "ON CONFLICT (email) DO NOTHING "
         "RETURNING id;",
