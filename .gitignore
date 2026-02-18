@@ -26,6 +26,7 @@ ui_*.h
 .idea/
 *.iml
 .vscode/
+.vs/
 *.xcodeproj/
 *.xcworkspace/
 
