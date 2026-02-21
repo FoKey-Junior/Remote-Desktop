@@ -43,5 +43,16 @@ void Router::start_server(int port_server_) {
     });
 
 
+
+    CROW_ROUTE(app, "/api/new_command")([]() {
+        return "new command";
+    });
+
+
+
+    CROW_ROUTE(app, "/api/get_command")([]() {
+        return "get command";
+    });
+
     app.port(port_server).run();
 }

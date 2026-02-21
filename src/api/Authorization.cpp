@@ -40,7 +40,7 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
             data_user[1].size()) != 0) {
         response = "Неверный пароль";
         return;
-            }
+    }
 
     auto token = jwt::create()
     .set_type("JWS")

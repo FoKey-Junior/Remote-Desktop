@@ -12,7 +12,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(Boost REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
-<<<<<<< HEAD
 
 
 include(FetchContent)
@@ -48,7 +47,7 @@ FetchContent_Declare(
         GIT_TAG master
 )
 FetchContent_MakeAvailable(crow)
-=======
+
 include(FetchContent)
 if (USE_SYSTEM_PQXX)
     if (libpqxx_FOUND)
@@ -69,7 +68,6 @@ endif()
 if (NOT jwt-cpp_FOUND)
     pkg_check_modules(JWT QUIET IMPORTED_TARGET jwt)
 endif()
->>>>>>> 87e2565 (0.6.9)
 
 set(SOURCES
         src/main.cpp
@@ -83,8 +81,6 @@ set(SOURCES
 add_executable(Remote_Desktop ${SOURCES})
 target_include_directories(Remote_Desktop PRIVATE include)
 
-<<<<<<< HEAD
-=======
 if (jwt-cpp_FOUND)
     set(JWT_TARGET jwt-cpp::jwt-cpp)
 elseif (JWT_FOUND)
@@ -119,7 +115,6 @@ if (NOT Crow_FOUND)
     FetchContent_MakeAvailable(crow)
 endif()
 
->>>>>>> 87e2565 (0.6.9)
 target_link_libraries(Remote_Desktop PRIVATE
         Boost::boost
         nlohmann_json::nlohmann_json
