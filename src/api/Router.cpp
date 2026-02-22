@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../../include/api/Router.hpp"
+#include "../../include/Database.hpp"
 #include "../../include/api/Registration.hpp" 
 #include "../../include/api/Authorization.hpp"
 
@@ -44,13 +45,33 @@ void Router::start_server(int port_server_) {
 
 
 
-    CROW_ROUTE(app, "/api/new_command")([]() {
+    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([](const crow::request& req) {
+        auto x = crow::json::load(req.body);
+
+        if (!x)
+            return crow::response(400);
+
+        std::string id = x["id"].s();
+        std::string command = x["command"].s();
+        Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
+        Database add_command(id, &command);
+
         return "new command";
     });
 
 
 
-    CROW_ROUTE(app, "/api/get_command")([]() {
+    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([](const crow::request& req) {
+        auto x = crow::json::load(req.body);
+
+        if (!x)
+            return crow::response(400);
+
+
+        std::string id = x["id"].s();
+        Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
+        Database get_command(id);
+
         return "get command";
     });
 
