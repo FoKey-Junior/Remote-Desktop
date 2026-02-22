@@ -62,7 +62,7 @@ bool Database::add_command(int id_user, std::string &command) {
     pqxx::work db(connect);
 
     pqxx::result r = db.exec_params(
-        "UPDATE commands "
+        "UPDATE user_commands "
         "SET command = ARRAY[$1] || command "
         "WHERE id = $2 "
         "RETURNING id;",
@@ -76,5 +76,17 @@ bool Database::add_command(int id_user, std::string &command) {
 }
 
 std::string& Database::get_command() {
+    pqxx::work db(connect);
+    pqxx::result r = db.exec_params(
+    "SELECT command[1] "
+    "FROM user_commands "
+    "WHERE id = $1;",
+    id
+);
 
+    if (r.empty() || r[0][0].is_null()) {
+        return "";
+    }
+
+    return r[0][0].c_str();
 }
