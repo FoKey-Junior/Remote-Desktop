@@ -14,7 +14,7 @@ Database::Database(const std::string& connection_data) : connect(connection_data
     }
 }
 
-bool Database::add_row(const std::vector<std::string>& data) {
+bool Database::add_user(const std::vector<std::string>& data) {
     if (data.size() < 2)
         throw std::invalid_argument("Not enough data");
 
@@ -56,4 +56,25 @@ bool Database::get_password_hash(const std::string& email, std::string& out_hash
 
     out_hash = r[0][0].as<std::string>();
     return true;
+}
+
+bool Database::add_command(int id_user, std::string &command) {
+    pqxx::work db(connect);
+
+    pqxx::result r = db.exec_params(
+        "UPDATE commands "
+        "SET command = ARRAY[$1] || command "
+        "WHERE id = $2 "
+        "RETURNING id;",
+        word,
+        id_user
+    );
+
+    db.commit();
+
+    return !r.empty();
+}
+
+std::string& Database::get_command() {
+
 }

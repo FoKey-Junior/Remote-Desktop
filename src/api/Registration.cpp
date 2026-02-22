@@ -45,6 +45,6 @@ Registration::Registration(const std::vector<std::string>& data_user) {
     std::vector<std::string> data_hashed = data_user;
     data_hashed[1] = hashed_password;
 
-    database.add_row(data_hashed);
+    database.add_user(data_hashed);
     response = "Новый пользователь был создан";
 }
