@@ -74,7 +74,7 @@ bool Database::add_command(int id_user, const std::string& command) {
     return !r.empty();
 }
 
-bool Database::delet_command(int id_user) {
+bool Database::delete_command(int id_user) {
     pqxx::work db(connect);
     pqxx::result r = db.exec_params(
         "UPDATE user_accounts "

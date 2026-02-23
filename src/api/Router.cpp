@@ -58,7 +58,7 @@ void Router::start_server(int port_server_) {
         };
     });
 
-    CROW_ROUTE(app, "/api/delet_command").methods("POST"_method)([&database](const crow::request& req) {
+    CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([&database](const crow::request& req) {
         auto x = crow::json::load(req.body);
 
         if (!x || !x.has("id"))
@@ -67,7 +67,7 @@ void Router::start_server(int port_server_) {
         int id = x["id"].i();
 
         return crow::response{
-              database.delet_command(id) ? 200 : 400
+              database.delete_command(id) ? 200 : 400
         };
     });
 
