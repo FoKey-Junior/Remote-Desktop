@@ -11,11 +11,13 @@ class Database {
 
 public:
     Database(const std::string& connection_data);
+
     bool add_user(const std::vector<std::string>& data);
     bool uniqueness_check(const std::string& email);
     bool get_password_hash(const std::string& email, std::string& out_hash);
 
     bool add_command(int id_user, const std::string& command);
+    bool delet_command(int id_user);
     std::string get_command(int id_user);
 };
 

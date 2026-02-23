@@ -71,7 +71,24 @@ bool Database::add_command(int id_user, const std::string& command) {
     );
 
     db.commit();
+    return !r.empty();
+}
 
+bool Database::delet_command(int id_user) {
+    pqxx::work db(connect);
+    pqxx::result r = db.exec_params(
+        "UPDATE user_accounts "
+        "SET commands = CASE "
+        "    WHEN array_length(commands,1) > 1 "
+        "        THEN commands[2:array_length(commands,1)] "
+        "    ELSE '{}' "
+        "END "
+        "WHERE id = $1 "
+        "RETURNING id;",
+        id_user
+    );
+
+    db.commit();
     return !r.empty();
 }
 
@@ -90,3 +107,5 @@ std::string Database::get_command(int id_user) {
 
     return r[0][0].c_str();
 }
+
+
