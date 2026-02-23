@@ -55,7 +55,9 @@ void Router::start_server(int port_server_) {
         std::string command = x["command"].s();
         Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
 
-        return Database::add_command(id, &command);
+        return crow::response{
+            database.add_command(std::stoi(id), command) ? 200 : 400
+        };
     });
 
 
@@ -69,7 +71,7 @@ void Router::start_server(int port_server_) {
         std::string id = x["id"].s();
         Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
 
-        return Database::get_command(id);
+        return crow::response{ database.get_command(std::stoi(id))};
     });
 
     app.port(port_server).run();

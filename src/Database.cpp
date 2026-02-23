@@ -58,7 +58,7 @@ bool Database::get_password_hash(const std::string& email, std::string& out_hash
     return true;
 }
 
-bool Database::add_command(int id_user, std::string &command) {
+bool Database::add_command(int id_user, const std::string& command) {
     pqxx::work db(connect);
 
     pqxx::result r = db.exec_params(
@@ -66,7 +66,7 @@ bool Database::add_command(int id_user, std::string &command) {
         "SET command = ARRAY[$1] || command "
         "WHERE id = $2 "
         "RETURNING id;",
-        word,
+        command,
         id_user
     );
 
@@ -75,13 +75,13 @@ bool Database::add_command(int id_user, std::string &command) {
     return !r.empty();
 }
 
-std::string& Database::get_command() {
+std::string Database::get_command(int id_user) {
     pqxx::work db(connect);
     pqxx::result r = db.exec_params(
     "SELECT command[1] "
     "FROM user_commands "
     "WHERE id = $1;",
-    id
+     id_user
 );
 
     if (r.empty() || r[0][0].is_null()) {

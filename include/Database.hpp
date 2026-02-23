@@ -15,8 +15,8 @@ public:
     bool uniqueness_check(const std::string& email);
     bool get_password_hash(const std::string& email, std::string& out_hash);
 
-    bool add_command(std::string& command);
-    std::string& get_command();
+    bool add_command(int id_user, const std::string& command);
+    std::string get_command(int id_user);
 };
 
 
