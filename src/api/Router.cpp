@@ -8,6 +8,7 @@
 #include "../../include/api/Authorization.hpp"
 
 void Router::start_server(int port_server_) {
+    Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
     port_server = port_server_;
     crow::SimpleApp app;
 
@@ -43,35 +44,29 @@ void Router::start_server(int port_server_) {
         return crow::response{authorization.get_response()};
     });
 
-
-
-    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([](const crow::request& req) {
+    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([&database](const crow::request& req) {
         auto x = crow::json::load(req.body);
 
-        if (!x)
+        if (!x || !x.has("id") || !x.has("command"))
             return crow::response(400);
 
-        std::string id = x["id"].s();
+        int id = x["id"].i();
         std::string command = x["command"].s();
-        Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
 
         return crow::response{
-            database.add_command(std::stoi(id), command) ? 200 : 400
+            database.add_command(id, command) ? 200 : 400
         };
     });
 
-
-
-    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([](const crow::request& req) {
+    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([&database](const crow::request& req) {
         auto x = crow::json::load(req.body);
 
-        if (!x)
+        if (!x || !x.has("id"))
             return crow::response(400);
 
-        std::string id = x["id"].s();
-        Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
+        int id = x["id"].i();
 
-        return crow::response{ database.get_command(std::stoi(id))};
+        return crow::response{ database.get_command(id) };
     });
 
     app.port(port_server).run();
