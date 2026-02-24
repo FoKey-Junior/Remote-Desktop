@@ -8,6 +8,8 @@
 #include "../../include/Database.hpp"
 #include "../../include/StringUtils.hpp"
 
+using namespace std::chrono;
+
 Authorization::Authorization(const std::vector<std::string>& data_user) {
     if (auto error = email_check(data_user[0])) {
         response = *error;
@@ -42,11 +44,24 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
         return;
     }
 
-    auto token = jwt::create()
-    .set_type("JWS")
-    .set_issuer("auth0")
-    .set_payload_claim("sample", jwt::claim(std::string("test")))
-    .sign(jwt::algorithm::hs256{"secret"});
 
-    response = "Вы вошли в аккаунт";
+    auto now = system_clock::now();
+    auto exp = now + hours(24);
+    const char* secret_env = std::getenv("JWT_SECRET");
+
+    if (!secret_env) {
+        response = "JWT secret not configured";
+        return;
+    }
+
+    std::string secret(secret_env);
+
+    auto token = jwt::create()
+        .set_issuer("postgres_cpp_server")
+        .set_subject(data_user[0])
+        .set_issued_at(now)
+        .set_expires_at(exp)
+        .sign(jwt::algorithm::hs256{ secret });
+
+    response = "Вы вошли в аккаунт, ваш токен: " + token;
 }
