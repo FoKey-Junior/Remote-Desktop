@@ -107,5 +107,3 @@ std::string Database::get_command(int id_user) {
 
     return r[0][0].c_str();
 }
-
-

@@ -40,7 +40,7 @@ Registration::Registration(const std::vector<std::string>& data_user) {
             crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
         response = "Ошибка хеширования пароля";
         return;
-            }
+    }
 
     std::vector<std::string> data_hashed = data_user;
     data_hashed[1] = hashed_password;

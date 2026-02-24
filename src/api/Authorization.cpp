@@ -44,24 +44,5 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
         return;
     }
 
-
-    auto now = system_clock::now();
-    auto exp = now + hours(24);
-    const char* secret_env = std::getenv("JWT_SECRET");
-
-    if (!secret_env)
-        response = "JWT secret not configured";
-        return;
-    }
-
-    std::string secret(secret_env);
-
-    auto token = jwt::create()
-        .set_issuer("127.0.0.1")
-        .set_subject(data_user[0])
-        .set_issued_at(now)
-        .set_expires_at(exp)
-        .sign(jwt::algorithm::hs256{ secret });
-
-    response = "Вы вошли в аккаунт, ваш токен: " + token;
+    response = "Вы вошли в аккаунт, ваш токен: ";
 }
