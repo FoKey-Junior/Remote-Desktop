@@ -49,7 +49,7 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
     auto exp = now + hours(24);
     const char* secret_env = std::getenv("JWT_SECRET");
 
-    if (!secret_env) {
+    if (!secret_env)
         response = "JWT secret not configured";
         return;
     }
@@ -57,7 +57,7 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
     std::string secret(secret_env);
 
     auto token = jwt::create()
-        .set_issuer("postgres_cpp_server")
+        .set_issuer("127.0.0.1")
         .set_subject(data_user[0])
         .set_issued_at(now)
         .set_expires_at(exp)
