@@ -53,9 +53,7 @@ void Router::start_server(int port_server_) {
         int id = x["id"].i();
         std::string command = x["command"].s();
 
-        return crow::response{
-            database.add_command(id, command) ? 200 : 400
-        };
+        return crow::response(database.add_command(id, command) ? 200 : 400);
     });
 
     CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([&database](const crow::request& req) {
@@ -66,9 +64,7 @@ void Router::start_server(int port_server_) {
 
         int id = x["id"].i();
 
-        return crow::response{
-              database.delete_command(id) ? 200 : 400
-        };
+        return crow::response(database.delete_command(id) ? 200 : 400);
     });
 
     CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([&database](const crow::request& req) {
@@ -79,7 +75,7 @@ void Router::start_server(int port_server_) {
 
         int id = x["id"].i();
 
-        return crow::response{ database.get_command(id) };
+        return crow::response(database.get_command(id) ? 200 : 400);
     });
 
     app.port(port_server).run();
