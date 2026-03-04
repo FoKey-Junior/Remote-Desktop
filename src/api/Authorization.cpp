@@ -8,6 +8,8 @@
 #include "../../include/Database.hpp"
 #include "../../include/StringUtils.hpp"
 
+using namespace std::chrono;
+
 Authorization::Authorization(const std::vector<std::string>& data_user) {
     if (auto error = email_check(data_user[0])) {
         response = *error;
@@ -40,13 +42,7 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
             data_user[1].size()) != 0) {
         response = "Неверный пароль";
         return;
-            }
+    }
 
-    auto token = jwt::create()
-    .set_type("JWS")
-    .set_issuer("auth0")
-    .set_payload_claim("sample", jwt::claim(std::string("test")))
-    .sign(jwt::algorithm::hs256{"secret"});
-
-    response = "Вы вошли в аккаунт";
+    response = "Вы вошли в аккаунт, ваш токен: ";
 }

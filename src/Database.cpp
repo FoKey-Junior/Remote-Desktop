@@ -14,7 +14,7 @@ Database::Database(const std::string& connection_data) : connect(connection_data
     }
 }
 
-bool Database::add_row(const std::vector<std::string>& data) {
+bool Database::add_user(const std::vector<std::string>& data) {
     if (data.size() < 2)
         throw std::invalid_argument("Not enough data");
 
@@ -56,4 +56,54 @@ bool Database::get_password_hash(const std::string& email, std::string& out_hash
 
     out_hash = r[0][0].as<std::string>();
     return true;
+}
+
+bool Database::add_command(int id_user, const std::string& command) {
+    pqxx::work db(connect);
+
+    pqxx::result r = db.exec_params(
+        "UPDATE user_accounts "
+        "SET commands = array_prepend($1, commands) "
+        "WHERE id = $2 "
+        "RETURNING id;",
+        command,
+        id_user
+    );
+
+    db.commit();
+    return !r.empty();
+}
+
+bool Database::delete_command(int id_user) {
+    pqxx::work db(connect);
+    pqxx::result r = db.exec_params(
+        "UPDATE user_accounts "
+        "SET commands = CASE "
+        "    WHEN array_length(commands,1) > 1 "
+        "        THEN commands[2:array_length(commands,1)] "
+        "    ELSE '{}' "
+        "END "
+        "WHERE id = $1 "
+        "RETURNING id;",
+        id_user
+    );
+
+    db.commit();
+    return !r.empty();
+}
+
+std::string Database::get_command(int id_user) {
+    pqxx::work db(connect);
+    pqxx::result r = db.exec_params(
+    "SELECT commands[1] "
+    "FROM user_accounts "
+    "WHERE id = $1;",
+     id_user
+);
+
+    if (r.empty() || r[0][0].is_null()) {
+        return "";
+    }
+
+    return r[0][0].c_str();
 }
