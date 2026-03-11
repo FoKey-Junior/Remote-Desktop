@@ -10,12 +10,12 @@
 
 namespace {
 std::optional<std::vector<std::string>> parse_user(const crow::request& req) {
-    auto x = crow::json::load(req.body);
-    if (!x || !x.has("email") || !x.has("password")) return std::nullopt;
-    if (x["email"].t() != crow::json::type::String || x["password"].t() != crow::json::type::String) return std::nullopt;
+    auto body = crow::json::load(req.body);
+    if (!body || !body.has("email") || !body.has("password")) return std::nullopt;
+    if (body["email"].t() != crow::json::type::String || body["password"].t() != crow::json::type::String) return std::nullopt;
 
     return std::vector<std::string>	{
-		x["email"].s(), x["password"].s()
+		body["email"].s(), body["password"].s()
 	};
 	}
 }
@@ -42,22 +42,22 @@ void Router::start_server(int port_server_) {
     });
 
     CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([database](const crow::request& req) {
-        auto x = crow::json::load(req.body);
-        if (!x || !x.has("id") || !x.has("command") || x["id"].t() != crow::json::type::Number || x["command"].t() != crow::json::type::String)
+        auto body = crow::json::load(req.body);
+        if (!body || !body.has("id") || !body.has("command") || body["id"].t() != crow::json::type::Number || body["command"].t() != crow::json::type::String)
             return crow::response(400);
-        return crow::response(database->add_command(x["id"].i(), x["command"].s()) ? 201 : 500);
+        return crow::response(database->add_command(body["id"].i(), body["command"].s()) ? 201 : 500);
     });
 
     CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([database](const crow::request& req) {
-        auto x = crow::json::load(req.body);
-        if (!x || !x.has("id") || x["id"].t() != crow::json::type::Number) return crow::response(400);
-        return crow::response(database->delete_command(x["id"].i()) ? 200 : 404);
+        auto body = crow::json::load(req.body);
+        if (!body || !body.has("id") || body["id"].t() != crow::json::type::Number) return crow::response(400);
+        return crow::response(database->delete_command(body["id"].i()) ? 200 : 404);
     });
 
     CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([database](const crow::request& req) {
-        auto x = crow::json::load(req.body);
-        if (!x || !x.has("id") || x["id"].t() != crow::json::type::Number) return crow::response(400);
-        auto result = database->get_command(x["id"].i());
+        auto body = crow::json::load(req.body);
+        if (!body || !body.has("id") || body["id"].t() != crow::json::type::Number) return crow::response(400);
+        auto result = database->get_command(body["id"].i());
         return result ? crow::response(200, *result) : crow::response(404);
     });
 
