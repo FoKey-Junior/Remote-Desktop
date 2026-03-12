@@ -1,17 +1,14 @@
 <div align="center">
+  
+<img src="https://github.com/FoKey-Junior/Remote-Desktop/blob/main/assets/background.jpg?raw=true" width="300"/>  
 <h1 align="center">Remote Desktop & API Server</h1>
 
 **Remote Desktop** - система для удалённого управления устройствами с графическим интерфейсом на Qt и серверной частью на C++20 с использованием Crow
-
 
 [![C++](https://img.shields.io/badge/C++-20-blue.svg)](https://isocpp.org/)
 [![Qt](https://img.shields.io/badge/Qt-6-green.svg)](https://www.qt.io/)
 [![CMake](https://img.shields.io/badge/CMake-3.25+-orange.svg)](https://cmake.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-<p align="center">
-  <img src="https://github.com/FoKey-Junior/Remote-Desktop/blob/main/assets/background.jpg?raw=true" width="300"/>
-</p>
 
 ---
 
