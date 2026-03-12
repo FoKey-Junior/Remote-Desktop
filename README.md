@@ -1,6 +1,9 @@
 <div align="center">
 <h1 align="center">Remote Desktop & API Server</h1>
 
+**Remote Desktop** - система для удалённого управления устройствами с графическим интерфейсом на Qt и серверной частью на C++20 с использованием Crow
+
+
 [![C++](https://img.shields.io/badge/C++-20-blue.svg)](https://isocpp.org/)
 [![Qt](https://img.shields.io/badge/Qt-6-green.svg)](https://www.qt.io/)
 [![CMake](https://img.shields.io/badge/CMake-3.25+-orange.svg)](https://cmake.org/)
@@ -13,8 +16,6 @@
 ---
 
 ## О проекте
-
-**Remote Desktop** - система для удалённого управления устройствами с графическим интерфейсом на Qt и серверной частью на C++20 с использованием Crow
 
 Данный репозиторий содержит **REST API для проекта**. Основное Qt-приложение, позволяющее с телефона отправлять команды на десктоп из любой точки мира, будет загружено в ближайшее время
 
