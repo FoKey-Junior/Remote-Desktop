@@ -58,7 +58,8 @@ void Router::start_server(int port_server_) {
         auto body = crow::json::load(req.body);
         if (!body || !body.has("id") || body["id"].t() != crow::json::type::Number) return crow::response(400);
         auto result = database->get_command(body["id"].i());
-        return result ? crow::response(200, *result) : crow::response(404);
+
+        return result.empty() ? crow::response(404) : crow::response(200, result);
     });
 
     app.port(port_server).multithreaded().run();
