@@ -54,6 +54,7 @@ set(SOURCES
         src/api/Authorization.cpp
         src/Database.cpp
         src/StringUtils.cpp
+        src/JwtService.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})

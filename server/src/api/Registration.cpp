@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../../include/api/Registration.hpp"
+#include "../../include/JwtService.hpp"
 #include "../../include/Database.hpp"
 #include "../../include/StringUtils.hpp"
 
@@ -49,16 +50,11 @@ Registration::Registration(const std::vector<std::string>& user_) {
     std::vector<std::string> data_hashed = user_;
     data_hashed[1] = hashed_password;
 
-    auto token = jwt::create()
-        .set_type("JWS")
-        .set_issuer("auth0")
-        .set_payload_claim("email", jwt::claim(std::string(email)))
-        .sign(jwt::algorithm::hs256{"secret"});
-    
     if (!database.add_user(data_hashed)) {
         response = "Не удалось добавить пользователя в базу данных";
         return;
     }
 
+    std::string token = JwtService::create_token(email);
     response = std::string("Новый пользователь ") + token + " был создан";
 }

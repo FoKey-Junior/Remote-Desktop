@@ -5,18 +5,22 @@
 #include <vector>
 
 #include "../../include/api/Authorization.hpp"
+#include "../../include/JwtService.hpp"
 #include "../../include/Database.hpp"
 #include "../../include/StringUtils.hpp"
 
 using namespace std::chrono;
 
-Authorization::Authorization(const std::vector<std::string>& data_user) {
-    if (auto error = email_check(data_user[0])) {
+Authorization::Authorization(const std::vector<std::string>& user_) {
+    std::string email = user_[0];
+    std::string password = user_[1];
+    
+    if (auto error = email_check(email)) {
         response = *error;
         return;
     }
 
-    for (const std::string& input : data_user) {
+    for (const std::string& input : user_) {
         if (auto error = length_check(input, 8, 64)) {
             response = *error;
             return;
@@ -31,18 +35,19 @@ Authorization::Authorization(const std::vector<std::string>& data_user) {
     std::string stored_hash;
     Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
 
-    if (!database.get_password_hash(data_user[0], stored_hash)) {
+    if (!database.get_password_hash(email, stored_hash)) {
         response = "Пользователь с таким именем не существует";
         return;
     }
 
     if (crypto_pwhash_str_verify(
             stored_hash.c_str(),
-            data_user[1].c_str(),
-            data_user[1].size()) != 0) {
+            password.c_str(),
+            password.size()) != 0) {
         response = "Неверный пароль";
         return;
     }
 
-    response = "Вы вошли в аккаунт, ваш токен: ";
+    std::string token = JwtService::create_token(email);
+    response = "ваш токен: " + token;
 }
