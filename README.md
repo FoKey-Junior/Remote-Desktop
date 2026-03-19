@@ -1,6 +1,6 @@
 <div align="center">
   
-<img src="https://github.com/FoKey-Junior/Remote-Desktop/blob/main/assets/background.jpg?raw=true" width="300"/>  
+<img src="https://github.com/user-attachments/assets/3c12fdea-0b72-405b-bce0-730fbb90fc58" width="300"/>  
 <h1 align="center">Remote Desktop & API Server</h1>
 
 **Remote Desktop** - система для удалённого управления устройствами с графическим интерфейсом на Qt и серверной частью на C++20 с использованием Crow
