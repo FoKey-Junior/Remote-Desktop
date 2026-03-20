@@ -1,35 +1,23 @@
 cmake_minimum_required(VERSION 3.25)
+
 if (POLICY CMP0167)
     cmake_policy(SET CMP0167 NEW)
 endif()
 
 project(Remote_Desktop LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard to use")
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Boost REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
 
 include(FetchContent)
-
-FetchContent_Declare(
-        libpqxx
-        GIT_REPOSITORY https://github.com/jtv/libpqxx.git
-        GIT_TAG 7.8.1
-)
-FetchContent_MakeAvailable(libpqxx)
-set(PQXX_TARGET pqxx)
-
-FetchContent_Declare(
-        jwt-cpp
-        GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
-        GIT_TAG v0.7.0
-)
-FetchContent_MakeAvailable(jwt-cpp)
-set(JWT_TARGET jwt-cpp::jwt-cpp)
 
 FetchContent_Declare(
         nlohmann_json
@@ -37,6 +25,13 @@ FetchContent_Declare(
         GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(nlohmann_json)
+
+FetchContent_Declare(
+        jwt-cpp
+        GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
+        GIT_TAG v0.7.0
+)
+FetchContent_MakeAvailable(jwt-cpp)
 
 set(CROW_BUILD_EXAMPLES OFF)
 set(CROW_BUILD_TESTS OFF)
@@ -58,15 +53,18 @@ set(SOURCES
 )
 
 add_executable(Remote_Desktop ${SOURCES})
-target_include_directories(Remote_Desktop PRIVATE include)
+
+target_include_directories(Remote_Desktop PRIVATE include ${ASIO_INCLUDE_DIR})
 
 target_link_libraries(Remote_Desktop PRIVATE
         Boost::boost
+        OpenSSL::SSL
+        OpenSSL::Crypto
         nlohmann_json::nlohmann_json
-        ${JWT_TARGET}
+        jwt-cpp::jwt-cpp
         Crow::Crow
         PkgConfig::SODIUM
-        ${PQXX_TARGET}
+        PkgConfig::PQXX
 )
 
 target_compile_definitions(Remote_Desktop PRIVATE PQXX_DISABLE_SOURCE_LOCATION)
