@@ -22,7 +22,7 @@ std::optional<std::vector<std::string>> parse_user(const crow::request& req) {
 
 void Router::start_server(int port_server_) {
     port_server = port_server_;
-    auto database = std::make_shared<Database>("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
+    auto database = std::make_shared<Database>("dbname=postgres user=postgres password=1234 host=localhost port=5432");
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/api").methods("GET"_method)([]() { return crow::response(200, "Server is working properly"); });
