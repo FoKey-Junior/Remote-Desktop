@@ -3,7 +3,6 @@
 #include <string>
 #include <memory>
 #include <optional>
-#include <mutex>
 #include "../../include/api/Router.hpp"
 #include "../../include/Database.hpp"
 #include "../../include/api/Registration.hpp"
@@ -21,14 +20,12 @@ namespace {
     }
 
     std::shared_ptr<Database> get_database() {
-        static std::shared_ptr<Database> database;
-        static std::once_flag once;
+        thread_local std::shared_ptr<Database> database;
+        if (database) return database;
 
         try {
-            std::call_once(once, [&]() {
-                database = std::make_shared<Database>(
-                    "dbname=postgres user=postgres password=1234 host=127.0.0.1 port=5432 connect_timeout=5");
-            });
+            database = std::make_shared<Database>(
+                "dbname=postgres user=postgres password=1234 host=127.0.0.1 port=5432 connect_timeout=5");
         } catch (const std::exception& e) {
             std::cerr << "Database init failed: " << e.what() << std::endl;
             database.reset();
