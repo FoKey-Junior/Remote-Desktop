@@ -25,7 +25,9 @@ Registration::Registration(const std::vector<std::string>& user_) {
         }
     }
 
-    Database database("dbname=postgres user=postgres password=1234 host=localhost port=5432");
+    Database database(
+        "dbname=postgres user=postgres password=1234 host=127.0.0.1 port=5432 connect_timeout=5");
+
     if (!database.uniqueness_check(email)) {
         response = "Пользователь с таким именем уже существует";
         return;

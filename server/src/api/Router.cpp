@@ -27,7 +27,7 @@ namespace {
         try {
             std::call_once(once, [&]() {
                 database = std::make_shared<Database>(
-                    "dbname=postgres user=postgres password=1234 host=localhost port=5432");
+                    "dbname=postgres user=postgres password=1234 host=127.0.0.1 port=5432 connect_timeout=5");
             });
         } catch (const std::exception& e) {
             std::cerr << "Database init failed: " << e.what() << std::endl;

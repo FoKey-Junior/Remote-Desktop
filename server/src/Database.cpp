@@ -4,8 +4,9 @@
 using namespace pqxx;
 using namespace std;
 
-Database::Database(const std::string& connection_data) : connect(connection_data) {
+Database::Database() {
     try {
+        std::string connect = "dbname=postgres user=postgres password=1234 host=localhost port=5432";
         pqxx::work bd(connect);
         bd.exec("SELECT 1");
         bd.commit();
