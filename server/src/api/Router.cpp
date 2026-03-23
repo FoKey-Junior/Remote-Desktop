@@ -3,45 +3,74 @@
 #include <string>
 #include <memory>
 #include <optional>
+#include <mutex>
 #include "../../include/api/Router.hpp"
 #include "../../include/Database.hpp"
 #include "../../include/api/Registration.hpp"
 #include "../../include/api/Authorization.hpp"
 
 namespace {
-std::optional<std::vector<std::string>> parse_user(const crow::request& req) {
-    auto body = crow::json::load(req.body);
-    if (!body || !body.has("email") || !body.has("password")) return std::nullopt;
-    if (body["email"].t() != crow::json::type::String || body["password"].t() != crow::json::type::String) return std::nullopt;
+    std::optional<std::vector<std::string>> parse_user(const crow::request& req) {
+        auto body = crow::json::load(req.body);
+        if (!body || !body.has("email") || !body.has("password")) return std::nullopt;
+        if (body["email"].t() != crow::json::type::String || body["password"].t() != crow::json::type::String) return std::nullopt;
 
-    return std::vector<std::string>	{
-		body["email"].s(), body["password"].s()
-	};
-	}
+        return std::vector<std::string>	{
+		    body["email"].s(), body["password"].s()
+	    };
+    }
+
+    std::shared_ptr<Database> get_database() {
+        static std::shared_ptr<Database> database;
+        static std::once_flag once;
+
+        try {
+            std::call_once(once, [&]() {
+                database = std::make_shared<Database>(
+                    "dbname=postgres user=postgres password=1234 host=localhost port=5432");
+            });
+        } catch (const std::exception& e) {
+            std::cerr << "Database init failed: " << e.what() << std::endl;
+            database.reset();
+        }
+
+        return database;
+    }
 }
 
 void Router::start_server(int port_server_) {
     port_server = port_server_;
-    auto database = std::make_shared<Database>("dbname=postgres user=postgres password=1234 host=localhost port=5432");
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/api").methods("GET"_method)([]() { return crow::response(200, "Server is working properly"); });
 
-    CROW_ROUTE(app, "/api/registration").methods("POST"_method)([database](const crow::request& req) {
+    CROW_ROUTE(app, "/api/registration").methods("POST"_method)([](const crow::request& req) {
         auto data = parse_user(req);
         if (!data) return crow::response(400);
-        Registration registration(*data);
-        return crow::response(200, registration.get_response());
+        try {
+            Registration registration(*data);
+            return crow::response(200, registration.get_response());
+        } catch (const std::exception& e) {
+            std::cerr << "Registration failed: " << e.what() << std::endl;
+            return crow::response(500);
+        }
     });
 
-    CROW_ROUTE(app, "/api/authorization").methods("POST"_method)([database](const crow::request& req) {
+    CROW_ROUTE(app, "/api/authorization").methods("POST"_method)([](const crow::request& req) {
         auto data = parse_user(req);
         if (!data) return crow::response(400);
-        Authorization authorization(*data);
-        return crow::response(200, authorization.get_response());
+        try {
+            Authorization authorization(*data);
+            return crow::response(200, authorization.get_response());
+        } catch (const std::exception& e) {
+            std::cerr << "Authorization failed: " << e.what() << std::endl;
+            return crow::response(500);
+        }
     });
 
-    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([database](const crow::request& req) {
+    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([](const crow::request& req) {
+        auto database = get_database();
+        if (!database) return crow::response(500);
         auto body = crow::json::load(req.body);
 
         if (!body ||
@@ -54,7 +83,9 @@ void Router::start_server(int port_server_) {
         return crow::response(database->add_command(body["id"].i(), body["command"].s()) ? 201 : 500);
     });
 
-    CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([database](const crow::request& req) {
+    CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([](const crow::request& req) {
+        auto database = get_database();
+        if (!database) return crow::response(500);
         auto body = crow::json::load(req.body);
 
         if (!body ||
@@ -67,7 +98,9 @@ void Router::start_server(int port_server_) {
         return crow::response(database->delete_command(body["id"].i()) ? 200 : 404);
     });
 
-    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([database](const crow::request& req) {
+    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([](const crow::request& req) {
+        auto database = get_database();
+        if (!database) return crow::response(500);
         auto body = crow::json::load(req.body);
         if (!body ||
             !body.has("id") || body["id"].t() != crow::json::type::Number ||

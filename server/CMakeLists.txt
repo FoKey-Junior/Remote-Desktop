@@ -10,6 +10,26 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Don't require network access during rebuilds (FetchContent update step).
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+
+# Crow expects standalone Asio headers (asio.hpp).
+# In Nix environments these headers are typically inside /nix/store/<...>-asio-*/include/asio.hpp.
+set(ASIO_INCLUDE_DIR "")
+file(GLOB _asio_headers "/nix/store/*-asio-*/include/asio.hpp")
+if (_asio_headers)
+    list(GET _asio_headers 0 _asio_header)
+    get_filename_component(ASIO_INCLUDE_DIR "${_asio_header}" DIRECTORY)
+endif()
+
+if (NOT ASIO_INCLUDE_DIR)
+    find_path(ASIO_INCLUDE_DIR NAMES asio.hpp PATH_SUFFIXES include)
+endif()
+
+if (NOT ASIO_INCLUDE_DIR)
+    message(FATAL_ERROR "Could not find asio.hpp (standalone Asio). Please install Nix package `asio`.")
+endif()
+
 if (NOT PKG_CONFIG_EXECUTABLE)
     find_program(_PKG_CONFIG_CANDIDATE NAMES pkg-config pkgconf)
     if (_PKG_CONFIG_CANDIDATE)

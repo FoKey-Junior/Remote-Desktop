@@ -33,7 +33,7 @@ Authorization::Authorization(const std::vector<std::string>& user_) {
     }
 
     std::string stored_hash;
-    Database database("dbname=postgres user=postgres password=1234 host=postgres_cpp port=5432");
+    Database database("dbname=postgres user=postgres password=1234 host=localhost port=5432");
 
     if (!database.get_password_hash(email, stored_hash)) {
         response = "Пользователь с таким именем не существует";
