@@ -7,8 +7,8 @@
 
 class JwtService {
     public:
-    static std::string create_token(std::string email);
-    static std::string verification_token(std::string token);
+    static std::string create_token(std::string& email);
+    static std::string verification_token(std::string& token);
 };
 
 
