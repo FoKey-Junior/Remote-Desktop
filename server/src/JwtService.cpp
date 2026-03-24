@@ -1,6 +1,6 @@
 #include "../include/JwtService.hpp"
 
-std::string JwtService::create_token(std::string email) {
+std::string JwtService::create_token(std::string& email) {
     auto token = jwt::create()
         .set_type("JWS")
         .set_issuer("auth0")
