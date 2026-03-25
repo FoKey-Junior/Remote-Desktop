@@ -83,6 +83,7 @@ set(SOURCES
         src/Database.cpp
         src/StringUtils.cpp
         src/JwtService.cpp
+        src/Database.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})

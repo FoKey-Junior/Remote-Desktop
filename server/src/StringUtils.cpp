@@ -1,15 +1,18 @@
-#include <optional>
-#include <string>
-#include <format>
+#include "StringUtils.hpp"
 #include <regex>
-#include <string_view>
-#include "../include/StringUtils.hpp"
+
+static const std::regex pattern_email(
+    R"((\w+)(\.\w+)*@(\w+)(\.\w+)+)",
+    std::regex::optimize
+);
 
 std::optional<std::string> length_check(const std::string& string_data, std::size_t min, std::size_t max) {
     if (string_data.size() < min) {
-        return std::format("Поле ввода должно содержать не менее {} символов", min);
-    } else if (string_data.size() > max) {
-        return std::format("Поле ввода не должно превышать {} символов", max);
+        return "Поле ввода должно содержать не менее " + std::to_string(min) + " символов";
+    }
+
+    if (string_data.size() > max) {
+        return "Поле ввода не должно превышать " + std::to_string(max) + " символов";
     }
 
     return std::nullopt;
