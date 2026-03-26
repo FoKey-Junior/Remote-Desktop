@@ -10,12 +10,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Don't require network access during rebuilds (FetchContent update step).
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
-# Crow expects standalone Asio headers (asio.hpp).
-# In Nix environments these headers are typically inside /nix/store/<...>-asio-*/include/asio.hpp.
-set(ASIO_INCLUDE_DIR "")
+# ---- ASIO ----
+set(ASIO_INCLUDE_DIR "" CACHE PATH "Standalone Asio include directory" FORCE)
+
 file(GLOB _asio_headers "/nix/store/*-asio-*/include/asio.hpp")
 if (_asio_headers)
     list(GET _asio_headers 0 _asio_header)
@@ -27,31 +26,41 @@ if (NOT ASIO_INCLUDE_DIR)
 endif()
 
 if (NOT ASIO_INCLUDE_DIR)
-    message(FATAL_ERROR "Could not find asio.hpp (standalone Asio). Please install Nix package `asio`.")
+    message(FATAL_ERROR "Could not find asio.hpp")
 endif()
 
+# ---- pkg-config ----
 if (NOT PKG_CONFIG_EXECUTABLE)
     find_program(_PKG_CONFIG_CANDIDATE NAMES pkg-config pkgconf)
     if (_PKG_CONFIG_CANDIDATE)
-        set(PKG_CONFIG_EXECUTABLE "${_PKG_CONFIG_CANDIDATE}" CACHE FILEPATH "Path to pkg-config executable")
+        set(PKG_CONFIG_EXECUTABLE "${_PKG_CONFIG_CANDIDATE}" CACHE FILEPATH "")
     endif()
 endif()
 
 find_package(PkgConfig REQUIRED)
+
+# ---- OpenSSL ----
 find_package(OpenSSL QUIET)
+
+set(REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "")
 
 if (OpenSSL_FOUND)
     set(OPENSSL_LINK_TARGETS OpenSSL::SSL OpenSSL::Crypto)
+    list(APPEND REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "${OPENSSL_INCLUDE_DIR}")
 else()
     pkg_check_modules(OPENSSL REQUIRED IMPORTED_TARGET openssl)
     set(OPENSSL_LINK_TARGETS PkgConfig::OPENSSL)
+    list(APPEND REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "${OPENSSL_INCLUDE_DIRS}")
 endif()
 
+# ---- Other libs ----
 pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
 
+# ---- FetchContent ----
 include(FetchContent)
 
+# JSON
 FetchContent_Declare(
         nlohmann_json
         GIT_REPOSITORY https://github.com/nlohmann/json.git
@@ -59,15 +68,23 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
+# JWT
 FetchContent_Declare(
         jwt-cpp
         GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
         GIT_TAG v0.7.0
 )
+set(JWT_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(JWT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(jwt-cpp)
 
+# 🔥 ФИКС: явно добавляем include путь
+FetchContent_GetProperties(jwt-cpp)
+
+# Crow
 set(CROW_BUILD_EXAMPLES OFF)
 set(CROW_BUILD_TESTS OFF)
+
 FetchContent_Declare(
         crow
         GIT_REPOSITORY https://github.com/CrowCpp/Crow.git
@@ -75,6 +92,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(crow)
 
+# ---- Sources ----
 set(SOURCES
         src/main.cpp
         src/api/Router.cpp
@@ -83,13 +101,20 @@ set(SOURCES
         src/Database.cpp
         src/StringUtils.cpp
         src/JwtService.cpp
-        src/Database.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})
 
-target_include_directories(Remote_Desktop PRIVATE include ${ASIO_INCLUDE_DIR})
+# ---- Includes ----
+target_include_directories(Remote_Desktop PRIVATE
+        include
+        ${ASIO_INCLUDE_DIR}
+        ${REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS}
+        ${PQXX_INCLUDE_DIRS}
+        ${jwt-cpp_SOURCE_DIR}/include   # 👈 КЛЮЧЕВОЙ ФИКС
+)
 
+# ---- Link ----
 target_link_libraries(Remote_Desktop PRIVATE
         ${OPENSSL_LINK_TARGETS}
         nlohmann_json::nlohmann_json
@@ -99,4 +124,7 @@ target_link_libraries(Remote_Desktop PRIVATE
         PkgConfig::PQXX
 )
 
-target_compile_definitions(Remote_Desktop PRIVATE PQXX_DISABLE_SOURCE_LOCATION)
+# ---- Defines ----
+target_compile_definitions(Remote_Desktop PRIVATE
+        PQXX_DISABLE_SOURCE_LOCATION
+)

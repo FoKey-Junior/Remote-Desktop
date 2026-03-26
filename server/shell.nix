@@ -11,6 +11,7 @@ pkgs.mkShell {
     openssl
     libpqxx
     libsodium
+    crow
     asio
   ];
 }
