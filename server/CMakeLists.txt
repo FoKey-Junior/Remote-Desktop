@@ -12,7 +12,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
-# ---- ASIO ----
 set(ASIO_INCLUDE_DIR "" CACHE PATH "Standalone Asio include directory" FORCE)
 
 file(GLOB _asio_headers "/nix/store/*-asio-*/include/asio.hpp")
@@ -29,7 +28,6 @@ if (NOT ASIO_INCLUDE_DIR)
     message(FATAL_ERROR "Could not find asio.hpp")
 endif()
 
-# ---- pkg-config ----
 if (NOT PKG_CONFIG_EXECUTABLE)
     find_program(_PKG_CONFIG_CANDIDATE NAMES pkg-config pkgconf)
     if (_PKG_CONFIG_CANDIDATE)
@@ -39,7 +37,6 @@ endif()
 
 find_package(PkgConfig REQUIRED)
 
-# ---- OpenSSL ----
 find_package(OpenSSL QUIET)
 
 set(REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "")
@@ -53,14 +50,11 @@ else()
     list(APPEND REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "${OPENSSL_INCLUDE_DIRS}")
 endif()
 
-# ---- Other libs ----
 pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
 pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
 
-# ---- FetchContent ----
 include(FetchContent)
 
-# JSON
 FetchContent_Declare(
         nlohmann_json
         GIT_REPOSITORY https://github.com/nlohmann/json.git
@@ -68,7 +62,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
-# JWT
 FetchContent_Declare(
         jwt-cpp
         GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
@@ -78,10 +71,8 @@ set(JWT_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(JWT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(jwt-cpp)
 
-# 🔥 ФИКС: явно добавляем include путь
 FetchContent_GetProperties(jwt-cpp)
 
-# Crow
 set(CROW_BUILD_EXAMPLES OFF)
 set(CROW_BUILD_TESTS OFF)
 
@@ -92,7 +83,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(crow)
 
-# ---- Sources ----
 set(SOURCES
         src/main.cpp
         src/api/Router.cpp
@@ -105,7 +95,6 @@ set(SOURCES
 
 add_executable(Remote_Desktop ${SOURCES})
 
-# ---- Includes ----
 target_include_directories(Remote_Desktop PRIVATE
         include
         ${ASIO_INCLUDE_DIR}
@@ -114,7 +103,6 @@ target_include_directories(Remote_Desktop PRIVATE
         ${jwt-cpp_SOURCE_DIR}/include   # 👈 КЛЮЧЕВОЙ ФИКС
 )
 
-# ---- Link ----
 target_link_libraries(Remote_Desktop PRIVATE
         ${OPENSSL_LINK_TARGETS}
         nlohmann_json::nlohmann_json
@@ -124,7 +112,6 @@ target_link_libraries(Remote_Desktop PRIVATE
         PkgConfig::PQXX
 )
 
-# ---- Defines ----
 target_compile_definitions(Remote_Desktop PRIVATE
         PQXX_DISABLE_SOURCE_LOCATION
 )
