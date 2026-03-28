@@ -15,6 +15,7 @@ using namespace std::chrono;
 Authorization::Authorization(const std::vector<std::string>& user_) {
     std::string email = user_[0];
     std::string password = user_[1];
+    Database database;
     
     if (auto error = email_check(email)) {
         response = *error;
@@ -34,18 +35,8 @@ Authorization::Authorization(const std::vector<std::string>& user_) {
     }
 
     std::string stored_hash;
-    static thread_local std::unique_ptr<Database> database;
-    if (!database) {
-        try {
-            database = std::make_unique<Database>(
-                "dbname=postgres user=postgres password=1234 host=127.0.0.1 port=5432 connect_timeout=5");
-        } catch (const std::exception& e) {
-            response = std::string("DB init failed: ") + e.what();
-            return;
-        }
-    }
 
-    if (!database->get_password_hash(email, stored_hash)) {
+    if (!database.get_password_hash(email, stored_hash)) {
         response = "Пользователь с таким именем не существует";
         return;
     }

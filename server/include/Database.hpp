@@ -10,7 +10,7 @@ class Database {
     pqxx::connection connect;
 
 public:
-    Database(const std::string& connection_data);
+    Database();
 
     [[nodiscard]] bool add_user(const std::vector<std::string>& data);
     [[nodiscard]] bool uniqueness_check(const std::string& email);
