@@ -10,7 +10,7 @@ Database::Database()
 {
     try {
         std::string connect_str = "dbname=postgres user=postgres password=1234 host=localhost port=5432";
-        connect = std::make_unique<pqxx::connection>(connect_str); // создаём соединение
+        connect = std::make_unique<pqxx::connection>(connect_str);
         if (!connect->is_open())
             throw std::runtime_error("Не удалось подключиться к БД");
     } catch (const std::exception &e) {
@@ -23,7 +23,7 @@ bool Database::add_user(const std::vector<std::string>& data) {
     if (data.size() < 2)
         throw std::invalid_argument("Not enough data");
 
-    pqxx::work db(*connect); // передаём соединение
+    pqxx::work db(*connect);
     auto r = db.exec_params(
         "INSERT INTO user_accounts (email, password_hash) "
         "VALUES ($1, $2) "
