@@ -7,7 +7,7 @@
 #include <string>
 
 class Database {
-    pqxx::connection connect;
+    std::unique_ptr<pqxx::connection> connect;
 
 public:
     Database();
