@@ -6,9 +6,9 @@
 #include <memory>
 
 #include "../../include/api/Authorization.hpp"
+#include "../../include/services/Database.hpp"
+#include "../../include/services/StringHandler.hpp"
 #include "../../include/services/JWT.hpp"
-#include "../../include/Database.hpp"
-#include "../../include/StringUtils.hpp"
 
 using namespace std::chrono;
 

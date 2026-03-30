@@ -4,9 +4,9 @@
 #include <memory>
 #include <optional>
 #include "../../include/api/Router.hpp"
-#include "../../include/Database.hpp"
 #include "../../include/api/Registration.hpp"
 #include "../../include/api/Authorization.hpp"
+#include "../../include/services/Database.hpp"
 
 namespace {
     std::optional<std::vector<std::string>> parse_user(const crow::request& req) {

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <pqxx/pqxx>
-#include "../include/Database.hpp"
+#include "../include/services/Database.hpp"
 
 using namespace pqxx;
 using namespace std;

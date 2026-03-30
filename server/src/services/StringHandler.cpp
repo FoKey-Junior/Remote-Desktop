@@ -1,4 +1,4 @@
-#include "StringUtils.hpp"
+#include "services/StringHandler.hpp"
 #include <regex>
 
 static const std::regex pattern_email(

@@ -88,8 +88,8 @@ set(SOURCES
         src/api/Router.cpp
         src/api/Registration.cpp
         src/api/Authorization.cpp
-        src/Database.cpp
-        src/StringUtils.cpp
+        src/services/Database.cpp
+        src/services/StringHandler.cpp
         src/services/JWT.cpp
 )
 
