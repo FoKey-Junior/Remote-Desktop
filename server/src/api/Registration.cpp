@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "../../include/api/Registration.hpp"
-#include "../../include/JwtService.hpp"
+#include "../../include/services/JWT.hpp"
 #include "../../include/Database.hpp"
 #include "../../include/StringUtils.hpp"
 
@@ -56,6 +56,6 @@ Registration::Registration(const std::vector<std::string>& user_) {
         return;
     }
 
-    std::string token = JwtService::create_token(email);
+    std::string token = JWT::create_token(email);
     response = std::string("Новый пользователь ") + token + " был создан";
 }

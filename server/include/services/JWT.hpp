@@ -5,7 +5,7 @@
 #include <string>
 
 
-class JwtService {
+class JWT {
     public:
     static std::string create_token(std::string& email);
     static std::string verification_token(std::string& token);
