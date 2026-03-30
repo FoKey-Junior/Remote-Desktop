@@ -15,7 +15,7 @@ Database::Database()
             throw std::runtime_error("Не удалось подключиться к БД");
     } catch (const std::exception &e) {
         cerr << "Database connectection error: " << e.what() << endl;
-        throw; // чтобы ошибки не игнорировались
+        throw;
     }
 }
 
@@ -31,6 +31,7 @@ bool Database::add_user(const std::vector<std::string>& data) {
         "RETURNING id;",
         pqxx::params{data[0], data[1]}
     );
+
     db.commit();
     return !r.empty();
 }
@@ -41,6 +42,7 @@ bool Database::uniqueness_check(const std::string& email) {
         "SELECT 1 FROM user_accounts WHERE email = $1 LIMIT 1",
         pqxx::params{email}
     );
+
     return r.empty();
 }
 
@@ -50,6 +52,7 @@ bool Database::get_password_hash(const std::string& email, std::string& out_hash
         "SELECT password_hash FROM user_accounts WHERE email = $1 LIMIT 1",
         pqxx::params{email}
     );
+
     if (r.empty()) return false;
     out_hash = r[0][0].as<std::string>();
     return true;
@@ -64,6 +67,7 @@ bool Database::add_command(int id_user, const std::string& command) {
         "RETURNING id;",
         pqxx::params{command, id_user}
     );
+
     db.commit();
     return !r.empty();
 }
@@ -81,6 +85,7 @@ bool Database::delete_command(int id_user) {
         "RETURNING id;",
         pqxx::params{id_user}
     );
+
     db.commit();
     return !r.empty();
 }
@@ -91,6 +96,7 @@ std::string Database::get_command(int id_user) {
         "SELECT commands[1] FROM user_accounts WHERE id = $1;",
         pqxx::params{id_user}
     );
+
     if (r.empty() || r[0][0].is_null()) return "";
     return r[0][0].as<std::string>();
 }
