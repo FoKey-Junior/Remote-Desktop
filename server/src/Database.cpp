@@ -24,12 +24,12 @@ bool Database::add_user(const std::vector<std::string>& data) {
         throw std::invalid_argument("Not enough data");
 
     pqxx::work db(*connect);
-    auto r = db.exec_params(
+    auto r = db.exec(
         "INSERT INTO user_accounts (email, password_hash) "
         "VALUES ($1, $2) "
         "ON CONFLICT (email) DO NOTHING "
         "RETURNING id;",
-        data[0], data[1]
+        pqxx::params{data[0], data[1]}
     );
     db.commit();
     return !r.empty();
@@ -37,18 +37,18 @@ bool Database::add_user(const std::vector<std::string>& data) {
 
 bool Database::uniqueness_check(const std::string& email) {
     pqxx::work db(*connect);
-    auto r = db.exec_params(
+    auto r = db.exec(
         "SELECT 1 FROM user_accounts WHERE email = $1 LIMIT 1",
-        email
+        pqxx::params{email}
     );
     return r.empty();
 }
 
 bool Database::get_password_hash(const std::string& email, std::string& out_hash) {
     pqxx::work db(*connect);
-    auto r = db.exec_params(
+    auto r = db.exec(
         "SELECT password_hash FROM user_accounts WHERE email = $1 LIMIT 1",
-        email
+        pqxx::params{email}
     );
     if (r.empty()) return false;
     out_hash = r[0][0].as<std::string>();
@@ -57,13 +57,12 @@ bool Database::get_password_hash(const std::string& email, std::string& out_hash
 
 bool Database::add_command(int id_user, const std::string& command) {
     pqxx::work db(*connect);
-    auto r = db.exec_params(
+    auto r = db.exec(
         "UPDATE user_accounts "
         "SET commands = array_prepend($1, commands) "
         "WHERE id = $2 "
         "RETURNING id;",
-        command,
-        id_user
+        pqxx::params{command, id_user}
     );
     db.commit();
     return !r.empty();
@@ -71,7 +70,7 @@ bool Database::add_command(int id_user, const std::string& command) {
 
 bool Database::delete_command(int id_user) {
     pqxx::work db(*connect);
-    auto r = db.exec_params(
+    auto r = db.exec(
         "UPDATE user_accounts "
         "SET commands = CASE "
         "    WHEN array_length(commands,1) > 1 "
@@ -80,7 +79,7 @@ bool Database::delete_command(int id_user) {
         "END "
         "WHERE id = $1 "
         "RETURNING id;",
-        id_user
+        pqxx::params{id_user}
     );
     db.commit();
     return !r.empty();
@@ -88,9 +87,9 @@ bool Database::delete_command(int id_user) {
 
 std::string Database::get_command(int id_user) {
     pqxx::work db(*connect);
-    auto r = db.exec_params(
+    auto r = db.exec(
         "SELECT commands[1] FROM user_accounts WHERE id = $1;",
-        id_user
+        pqxx::params{id_user}
     );
     if (r.empty() || r[0][0].is_null()) return "";
     return r[0][0].as<std::string>();
