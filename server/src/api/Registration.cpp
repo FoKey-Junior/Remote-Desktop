@@ -5,10 +5,10 @@
 #include <vector>
 #include <memory>
 
-#include "../../include/api/Registration.hpp"
-#include "../../include/services/Database.hpp"
-#include "../../include/services/StringHandler.hpp"
-#include "../../include/services/JWT.hpp"
+#include "api/Registration.hpp"
+#include "services/Database.hpp"
+#include "services/StringHandler.hpp"
+#include "services/JWT.hpp"
 
 Registration::Registration(const std::vector<std::string>& user_) {
     std::string email = user_[0];

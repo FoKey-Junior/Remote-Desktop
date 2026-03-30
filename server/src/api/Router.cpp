@@ -3,10 +3,11 @@
 #include <string>
 #include <memory>
 #include <optional>
-#include "../../include/api/Router.hpp"
-#include "../../include/api/Registration.hpp"
-#include "../../include/api/Authorization.hpp"
-#include "../../include/services/Database.hpp"
+
+#include "api/Router.hpp"
+#include "api/Registration.hpp"
+#include "api/Authorization.hpp"
+#include "services/Database.hpp"
 
 namespace {
     std::optional<std::vector<std::string>> parse_user(const crow::request& req) {

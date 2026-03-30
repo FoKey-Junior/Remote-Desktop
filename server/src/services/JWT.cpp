@@ -1,4 +1,4 @@
-#include "../include/services/JWT.hpp"
+#include "services/JWT.hpp"
 
 std::string JWT::create_token(std::string& email) {
     auto token = jwt::create()

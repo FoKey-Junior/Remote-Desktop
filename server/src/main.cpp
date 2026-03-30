@@ -1,6 +1,6 @@
 #include <iostream>
 #include <exception>
-#include "../include/api/Router.hpp"
+#include "api/Router.hpp"
 
 int main() {
     try {
