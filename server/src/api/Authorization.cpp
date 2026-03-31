@@ -50,5 +50,5 @@ Authorization::Authorization(const std::vector<std::string>& user_) {
     }
 
     std::string token = JWT::create_token(email);
-    response = "ваш токен: " + token;
+    response = token;
 }

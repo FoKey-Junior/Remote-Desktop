@@ -57,5 +57,5 @@ Registration::Registration(const std::vector<std::string>& user_) {
     }
 
     std::string token = JWT::create_token(email);
-    response = std::string("Новый пользователь ") + token + " был создан";
+    response = token;
 }
