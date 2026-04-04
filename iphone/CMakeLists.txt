@@ -82,12 +82,6 @@ FetchContent_MakeAvailable(crow)
 # --- Источники ---
 set(SOURCES
     src/main.cpp
-    src/api/Router.cpp
-    src/api/Registration.cpp
-    src/api/Authorization.cpp
-    src/services/Database.cpp
-    src/services/StringHandler.cpp
-    src/services/JWT.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})
