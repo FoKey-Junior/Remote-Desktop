@@ -3,11 +3,13 @@
 #include <string>
 #include <memory>
 #include <optional>
+#include <iostream>
 
 #include "api/Router.hpp"
 #include "api/Registration.hpp"
 #include "api/Authorization.hpp"
 #include "services/Database.hpp"
+#include "services/JWT.hpp"
 
 namespace {
     std::optional<std::vector<std::string>> parse_user(const crow::request& req) {
@@ -25,6 +27,7 @@ void Router::start_server(int port_server_) {
     port_server = port_server_;
     crow::SimpleApp app;
     Database database;
+    JWT jwt;
 
     CROW_ROUTE(app, "/api").methods("GET"_method)([]() { return crow::response(200, "Server is working properly"); });
 
@@ -54,7 +57,7 @@ void Router::start_server(int port_server_) {
         }
     });
 
-    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([&database](const crow::request& req) {
+    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([&database, &jwt](const crow::request& req) {
         auto body = crow::json::load(req.body);
 
         if (!body ||
@@ -63,6 +66,8 @@ void Router::start_server(int port_server_) {
             !body.has("token") || body["token"].t() != crow::json::type::String)
             return crow::response(400);
 
+        std::string token = body["token"].s();
+        std::cout << "token: " << jwt.verification_token(token) << std::endl;
         return crow::response(database.add_command(body["id"].i(), body["command"].s()) ? 201 : 500);
     });
 
