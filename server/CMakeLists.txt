@@ -55,16 +55,16 @@ pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
 include(FetchContent)
 
 FetchContent_Declare(
-    nlohmann_json
-    GIT_REPOSITORY https://github.com/nlohmann/json.git
-    GIT_TAG v3.11.3
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
 FetchContent_Declare(
-    jwt-cpp
-    GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
-    GIT_TAG v0.7.0
+        jwt-cpp
+        GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
+        GIT_TAG v0.7.0
 )
 set(JWT_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(JWT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -73,42 +73,38 @@ FetchContent_MakeAvailable(jwt-cpp)
 set(CROW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CROW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
-    crow
-    GIT_REPOSITORY https://github.com/CrowCpp/Crow.git
-    GIT_TAG master
+        crow
+        GIT_REPOSITORY https://github.com/CrowCpp/Crow.git
+        GIT_TAG master
 )
 FetchContent_MakeAvailable(crow)
 
 # --- Источники ---
-set(SOURCES
-    src/main.cpp
-    src/api/Router.cpp
-    src/api/Registration.cpp
-    src/api/Authorization.cpp
-    src/services/Database.cpp
-    src/services/StringHandler.cpp
-    src/services/JWT.cpp
+file(GLOB_RECURSE SOURCES
+        src/*.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})
 
+# --- Include директории ---
 target_include_directories(Remote_Desktop PRIVATE
-    include
-    ${ASIO_INCLUDE_DIR}
-    ${REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS}
-    ${PQXX_INCLUDE_DIRS}
-    ${jwt-cpp_SOURCE_DIR}/include
+        src                  # теперь #include "api/Router.hpp" работает из любого .cpp
+        include
+        ${ASIO_INCLUDE_DIR}
+        ${REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS}
+        ${PQXX_INCLUDE_DIRS}
+        ${jwt-cpp_SOURCE_DIR}/include
 )
 
 target_link_libraries(Remote_Desktop PRIVATE
-    ${OPENSSL_LINK_TARGETS}
-    nlohmann_json::nlohmann_json
-    jwt-cpp::jwt-cpp
-    Crow::Crow
-    PkgConfig::SODIUM
-    PkgConfig::PQXX
+        ${OPENSSL_LINK_TARGETS}
+        nlohmann_json::nlohmann_json
+        jwt-cpp::jwt-cpp
+        Crow::Crow
+        PkgConfig::SODIUM
+        PkgConfig::PQXX
 )
 
 target_compile_definitions(Remote_Desktop PRIVATE
-    PQXX_DISABLE_SOURCE_LOCATION
+        PQXX_DISABLE_SOURCE_LOCATION
 )
