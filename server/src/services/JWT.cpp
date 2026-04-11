@@ -10,7 +10,7 @@ std::string JWT::create_token(const std::string& email) {
     return token;
 }
 
-std::string verification_token(const std::string& token) {
+std::string JWT::verification_token(const std::string& token) {
     auto verifier = jwt::verify()
         .allow_algorithm(jwt::algorithm::hs256{"secret"})
         .with_issuer("auth0");

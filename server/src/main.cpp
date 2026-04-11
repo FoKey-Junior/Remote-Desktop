@@ -3,9 +3,12 @@
 #include "api/Router.hpp"
 
 int main() {
+    int port = 4000;
+
     try {
         Router router;
-        router.start_server(8080);
+        std::cout << "start http server http://localhost:" << port << "/api" << std::endl;
+        router.start_server(port);
     }
     catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
