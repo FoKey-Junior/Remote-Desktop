@@ -12,46 +12,78 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
+# --- Platform detection ---
+if(APPLE)
+    message(STATUS "Building on macOS")
+elseif(UNIX)
+    message(STATUS "Building on Linux")
+endif()
+
+# --- Homebrew support (macOS) ---
+if(APPLE)
+    list(APPEND CMAKE_PREFIX_PATH
+            /opt/homebrew
+            /usr/local
+    )
+endif()
+
 # --- Asio ---
-set(ASIO_INCLUDE_DIR "" CACHE PATH "Standalone Asio include directory" FORCE)
-file(GLOB _asio_headers "/nix/store/*-asio-*/include/asio.hpp")
-if(_asio_headers)
-    list(GET _asio_headers 0 _asio_header)
-    get_filename_component(ASIO_INCLUDE_DIR "${_asio_header}" DIRECTORY)
+find_path(ASIO_INCLUDE_DIR
+        NAMES asio.hpp
+        PATH_SUFFIXES include
+)
+
+# fallback для Nix
+if(NOT ASIO_INCLUDE_DIR AND UNIX)
+    file(GLOB _asio_headers "/nix/store/*-asio-*/include/asio.hpp")
+    if(_asio_headers)
+        list(GET _asio_headers 0 _asio_header)
+        get_filename_component(ASIO_INCLUDE_DIR "${_asio_header}" DIRECTORY)
+    endif()
 endif()
-if(NOT ASIO_INCLUDE_DIR)
-    find_path(ASIO_INCLUDE_DIR NAMES asio.hpp PATH_SUFFIXES include)
-endif()
+
 if(NOT ASIO_INCLUDE_DIR)
     message(FATAL_ERROR "Could not find asio.hpp")
 endif()
 
-# --- pkg-config ---
-if(NOT PKG_CONFIG_EXECUTABLE)
-    find_program(_PKG_CONFIG_CANDIDATE NAMES pkg-config pkgconf)
-    if(_PKG_CONFIG_CANDIDATE)
-        set(PKG_CONFIG_EXECUTABLE "${_PKG_CONFIG_CANDIDATE}" CACHE FILEPATH "")
-    endif()
+# --- pkg-config (optional!) ---
+find_program(PKG_CONFIG_EXECUTABLE NAMES pkg-config pkgconf)
+
+if(PKG_CONFIG_EXECUTABLE)
+    find_package(PkgConfig)
 endif()
-find_package(PkgConfig REQUIRED)
 
 # --- OpenSSL ---
 find_package(OpenSSL QUIET)
-set(REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "")
+
 if(OpenSSL_FOUND)
     set(OPENSSL_LINK_TARGETS OpenSSL::SSL OpenSSL::Crypto)
-    list(APPEND REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "${OPENSSL_INCLUDE_DIR}")
+    set(REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIR})
 else()
-    pkg_check_modules(OPENSSL REQUIRED IMPORTED_TARGET openssl)
-    set(OPENSSL_LINK_TARGETS PkgConfig::OPENSSL)
-    list(APPEND REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS "${OPENSSL_INCLUDE_DIRS}")
+    if(PKG_CONFIG_EXECUTABLE)
+        pkg_check_modules(OPENSSL REQUIRED IMPORTED_TARGET openssl)
+        set(OPENSSL_LINK_TARGETS PkgConfig::OPENSSL)
+        set(REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIRS})
+    else()
+        message(FATAL_ERROR "OpenSSL not found")
+    endif()
 endif()
 
-# --- PostgreSQL и Sodium ---
-pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
-pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
+# --- PostgreSQL + Sodium ---
+if(PKG_CONFIG_EXECUTABLE)
+    pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
+    pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
+else()
+    find_package(PostgreSQL REQUIRED)
+    find_library(SODIUM_LIBRARY sodium REQUIRED)
 
-# --- FetchContent зависимости ---
+    add_library(SODIUM::SODIUM UNKNOWN IMPORTED)
+    set_target_properties(SODIUM::SODIUM PROPERTIES
+            IMPORTED_LOCATION ${SODIUM_LIBRARY}
+    )
+endif()
+
+# --- FetchContent ---
 include(FetchContent)
 
 FetchContent_Declare(
@@ -79,16 +111,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(crow)
 
-# --- Источники ---
+# --- Sources ---
 file(GLOB_RECURSE SOURCES
         src/*.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})
 
-# --- Include директории ---
+# --- Includes ---
 target_include_directories(Remote_Desktop PRIVATE
-        src                  # теперь #include "api/Router.hpp" работает из любого .cpp
+        src
         include
         ${ASIO_INCLUDE_DIR}
         ${REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS}
@@ -96,15 +128,28 @@ target_include_directories(Remote_Desktop PRIVATE
         ${jwt-cpp_SOURCE_DIR}/include
 )
 
+# --- Link ---
 target_link_libraries(Remote_Desktop PRIVATE
         ${OPENSSL_LINK_TARGETS}
         nlohmann_json::nlohmann_json
         jwt-cpp::jwt-cpp
         Crow::Crow
-        PkgConfig::SODIUM
-        PkgConfig::PQXX
 )
 
+# Linux / Nix путь
+if(PKG_CONFIG_EXECUTABLE)
+    target_link_libraries(Remote_Desktop PRIVATE
+            PkgConfig::SODIUM
+            PkgConfig::PQXX
+    )
+else()
+    target_link_libraries(Remote_Desktop PRIVATE
+            SODIUM::SODIUM
+            PostgreSQL::PostgreSQL
+    )
+endif()
+
+# --- Definitions ---
 target_compile_definitions(Remote_Desktop PRIVATE
         PQXX_DISABLE_SOURCE_LOCATION
 )
