@@ -9,13 +9,19 @@ using namespace std;
 Database::Database()
 {
     try {
-        std::string connect_str = "dbname=postgres user=postgres password=1234 host=localhost port=5432";
+        std::string connect_str = "dbname=postgres user=postgres password=1234 host=localhost port=5432 connect_timeout=3";
         connect = std::make_unique<pqxx::connection>(connect_str);
-        if (!connect->is_open())
-            throw std::runtime_error("Не удалось подключиться к БД");
+
+        if (connect->is_open()) {
+            status_db = true;
+            std::cout << "DB connected\n";
+        } else {
+            std::cerr << "DB not opened\n";
+            status_db = false;
+        }
     } catch (const std::exception &e) {
-        cerr << "Database connectection error: " << e.what() << endl;
-        throw;
+        std::cerr << "Database connection error: " << e.what() << std::endl;
+        status_db = false;
     }
 }
 

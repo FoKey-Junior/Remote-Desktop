@@ -8,9 +8,11 @@
 
 class Database {
     std::unique_ptr<pqxx::connection> connect;
+    bool status_db = false;
 
 public:
     Database();
+    bool get_status_db() const { return status_db; }
 
     [[nodiscard]] bool add_user(const std::vector<std::string>& data);
     [[nodiscard]] bool uniqueness_check(const std::string& email);

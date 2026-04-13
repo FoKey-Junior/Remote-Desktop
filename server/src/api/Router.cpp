@@ -27,20 +27,12 @@ void Router::start_server(int port_server_) {
     port_server = port_server_;
     crow::SimpleApp app;
 
-    std::cout << "0000000\n";
-
     auto database = std::make_shared<Database>();
     auto jwt = std::make_shared<JWT>();
 
-    std::cout << "1111111111111\n";
-    try {
-        database = std::make_unique<Database>();
-        jwt = std::make_unique<JWT>();
-    } catch (const std::exception& error) {
-        std::cout << "error: " << error.what() << std::endl;
+    if (!database->get_status_db()) {
+        std::cerr << "DB unavailable, running in degraded mode\n";
     }
-
-    std::cout << "222222222222\n";
 
     CROW_ROUTE(app, "/api").methods("GET"_method)([]() { return crow::response(200, "Server is working properly"); });
 
