@@ -3,10 +3,8 @@
 
 
 class Router {
-    int port_server = 8080;
-
 public:
-    void start_server(int port_server_);
+    void start_server(int port_server);
 };
 
 

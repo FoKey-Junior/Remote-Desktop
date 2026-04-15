@@ -11,11 +11,11 @@ std::string JWT::create_token(const std::string& email) {
 }
 
 std::string JWT::verification_token(const std::string& token) {
-    auto verifier = jwt::verify()
+    const auto verifier = jwt::verify()
         .allow_algorithm(jwt::algorithm::hs256{"secret"})
         .with_issuer("auth0");
 
-    auto decoded = jwt::decode(token);
+    const auto decoded = jwt::decode(token);
     verifier.verify(decoded);
 
     std::string email = decoded.get_payload_claim("email").as_string();

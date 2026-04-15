@@ -1,9 +1,6 @@
-#include <jwt-cpp/jwt.h>
 #include <sodium.h>
-#include <iostream>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "api/Authorization.hpp"
 #include "services/Database.hpp"
@@ -12,18 +9,18 @@
 
 using namespace std::chrono;
 
-Authorization::Authorization(const std::vector<std::string>& user_) {
-    std::string email = user_[0];
-    std::string password = user_[1];
-    Database database;
-    
-    if (auto error = email_check(email)) {
+Authorization::Authorization(const std::vector<std::string>& user) {
+    const std::string& email = user[0];
+    const std::string& password = user[1];
+    const Database database;
+
+    if (const auto error = email_check(email)) {
         response = *error;
         return;
     }
 
-    for (const std::string& input : user_) {
-        if (auto error = length_check(input, 8, 64)) {
+    for (const std::string& input : user) {
+        if (const auto error = length_check(input, 8, 64)) {
             response = *error;
             return;
         }
@@ -49,6 +46,6 @@ Authorization::Authorization(const std::vector<std::string>& user_) {
         return;
     }
 
-    std::string token = JWT::create_token(email);
+    const std::string token = JWT::create_token(email);
     response = token;
 }

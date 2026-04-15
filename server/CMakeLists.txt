@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 if(POLICY CMP0167)
     cmake_policy(SET CMP0167 NEW)
 endif()
@@ -9,17 +11,14 @@ project(Remote_Desktop LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
-# --- Platform detection ---
 if(APPLE)
     message(STATUS "Building on macOS")
 elseif(UNIX)
     message(STATUS "Building on Linux")
 endif()
 
-# --- Homebrew support (macOS) ---
 if(APPLE)
     list(APPEND CMAKE_PREFIX_PATH
             /opt/homebrew
@@ -27,13 +26,11 @@ if(APPLE)
     )
 endif()
 
-# --- Asio ---
 find_path(ASIO_INCLUDE_DIR
         NAMES asio.hpp
         PATH_SUFFIXES include
 )
 
-# fallback для Nix
 if(NOT ASIO_INCLUDE_DIR AND UNIX)
     file(GLOB _asio_headers "/nix/store/*-asio-*/include/asio.hpp")
     if(_asio_headers)
@@ -46,14 +43,12 @@ if(NOT ASIO_INCLUDE_DIR)
     message(FATAL_ERROR "Could not find asio.hpp")
 endif()
 
-# --- pkg-config (optional!) ---
 find_program(PKG_CONFIG_EXECUTABLE NAMES pkg-config pkgconf)
 
 if(PKG_CONFIG_EXECUTABLE)
     find_package(PkgConfig)
 endif()
 
-# --- OpenSSL ---
 find_package(OpenSSL QUIET)
 
 if(OpenSSL_FOUND)
@@ -69,7 +64,6 @@ else()
     endif()
 endif()
 
-# --- PostgreSQL + Sodium ---
 if(PKG_CONFIG_EXECUTABLE)
     pkg_check_modules(PQXX REQUIRED IMPORTED_TARGET libpqxx)
     pkg_check_modules(SODIUM REQUIRED IMPORTED_TARGET libsodium)
@@ -83,7 +77,6 @@ else()
     )
 endif()
 
-# --- FetchContent ---
 include(FetchContent)
 
 FetchContent_Declare(
@@ -111,14 +104,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(crow)
 
-# --- Sources ---
+FetchContent_Declare(
+        yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+        GIT_TAG 0.8.0
+)
+FetchContent_MakeAvailable(yaml-cpp)
+
 file(GLOB_RECURSE SOURCES
         src/*.cpp
 )
 
 add_executable(Remote_Desktop ${SOURCES})
 
-# --- Includes ---
 target_include_directories(Remote_Desktop PRIVATE
         src
         include
@@ -128,15 +126,14 @@ target_include_directories(Remote_Desktop PRIVATE
         ${jwt-cpp_SOURCE_DIR}/include
 )
 
-# --- Link ---
 target_link_libraries(Remote_Desktop PRIVATE
         ${OPENSSL_LINK_TARGETS}
         nlohmann_json::nlohmann_json
         jwt-cpp::jwt-cpp
         Crow::Crow
+        yaml-cpp
 )
 
-# Linux / Nix путь
 if(PKG_CONFIG_EXECUTABLE)
     target_link_libraries(Remote_Desktop PRIVATE
             PkgConfig::SODIUM
@@ -149,7 +146,6 @@ else()
     )
 endif()
 
-# --- Definitions ---
 target_compile_definitions(Remote_Desktop PRIVATE
         PQXX_DISABLE_SOURCE_LOCATION
 )

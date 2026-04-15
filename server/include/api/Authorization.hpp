@@ -9,7 +9,7 @@ class Authorization {
   std::string response;
 
   public:
-  Authorization(const std::vector<std::string>& user_);
+  Authorization(const std::vector<std::string>& user);
   std::string get_response() { return response; };
 };
 

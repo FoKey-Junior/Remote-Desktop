@@ -1,27 +1,24 @@
-#include <jwt-cpp/jwt.h>
 #include <sodium.h>
-#include <iostream>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "api/Registration.hpp"
 #include "services/Database.hpp"
 #include "services/StringHandler.hpp"
 #include "services/JWT.hpp"
 
-Registration::Registration(const std::vector<std::string>& user_) {
-    std::string email = user_[0];
-    std::string password = user_[1];
-    Database database;
+Registration::Registration(const std::vector<std::string>& user) {
+    const std::string& email = user[0];
+    const std::string& password = user[1];
+    const Database database;
 
-    if (auto error = email_check(email)) {
+    if (const auto error = email_check(email)) {
         response = *error;
         return;
     }
 
-    for (const std::string& input : user_) {
-        if (auto error = length_check(input, 8, 64)) {
+    for (const std::string& input : user) {
+        if (const auto error = length_check(input, 8, 64)) {
             response = *error;
             return;
         }
@@ -48,7 +45,7 @@ Registration::Registration(const std::vector<std::string>& user_) {
         return;
             }
 
-    std::vector<std::string> data_hashed = user_;
+    std::vector<std::string> data_hashed = user;
     data_hashed[1] = hashed_password;
 
     if (!database.add_user(data_hashed)) {
@@ -56,6 +53,6 @@ Registration::Registration(const std::vector<std::string>& user_) {
         return;
     }
 
-    std::string token = JWT::create_token(email);
+    const std::string token = JWT::create_token(email);
     response = token;
 }

@@ -6,7 +6,7 @@ static const std::regex pattern_email(
     std::regex::optimize
 );
 
-std::optional<std::string> length_check(const std::string& string_data, std::size_t min, std::size_t max) {
+std::optional<std::string> length_check(const std::string& string_data, std::size_t min, const std::size_t max) {
     if (string_data.size() < min) {
         return "Поле ввода должно содержать не менее " + std::to_string(min) + " символов";
     }

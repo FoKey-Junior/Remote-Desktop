@@ -13,7 +13,7 @@
 
 namespace {
     std::optional<std::vector<std::string>> parse_user(const crow::request& req) {
-        auto body = crow::json::load(req.body);
+        const auto body = crow::json::load(req.body);
         if (!body || !body.has("email") || !body.has("password")) return std::nullopt;
         if (body["email"].t() != crow::json::type::String || body["password"].t() != crow::json::type::String) return std::nullopt;
 
@@ -23,8 +23,7 @@ namespace {
     }
 }
 
-void Router::start_server(int port_server_) {
-    port_server = port_server_;
+void Router::start_server(int port_server) {
     crow::SimpleApp app;
 
     auto database = std::make_shared<Database>();
@@ -37,7 +36,7 @@ void Router::start_server(int port_server_) {
     CROW_ROUTE(app, "/api").methods("GET"_method)([]() { return crow::response(200, "Server is working properly"); });
 
     CROW_ROUTE(app, "/api/registration").methods("POST"_method)([](const crow::request& req) {
-        auto data = parse_user(req);
+        const auto data = parse_user(req);
         if (!data) return crow::response(400);
 
         try {
@@ -50,7 +49,7 @@ void Router::start_server(int port_server_) {
     });
 
     CROW_ROUTE(app, "/api/authorization").methods("POST"_method)([](const crow::request& req) {
-        auto data = parse_user(req);
+        const auto data = parse_user(req);
         if (!data) return crow::response(400);
 
         try {
@@ -63,7 +62,7 @@ void Router::start_server(int port_server_) {
     });
 
     CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([&database, &jwt](const crow::request& req) {
-        auto body = crow::json::load(req.body);
+        const auto body = crow::json::load(req.body);
 
         if (!body ||
             !body.has("token") || body["token"].t() != crow::json::type::String ||
@@ -75,7 +74,7 @@ void Router::start_server(int port_server_) {
     });
 
     CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([&database, &jwt](const crow::request& req) {
-        auto body = crow::json::load(req.body);
+        const auto body = crow::json::load(req.body);
 
         if (!body ||!body.has("token") || body["token"].t() != crow::json::type::String) {
             return crow::response(400);
@@ -85,13 +84,13 @@ void Router::start_server(int port_server_) {
     });
 
     CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([&database, &jwt](const crow::request& req) {
-        auto body = crow::json::load(req.body);
+        const auto body = crow::json::load(req.body);
 
         if (!body || !body.has("token") || body["token"].t() != crow::json::type::String) {
             return crow::response(400);
         }
 
-        auto result = database->get_command(jwt->verification_token(body["token"].s()));
+        const auto result = database->get_command(jwt->verification_token(body["token"].s()));
         return result.empty() ? crow::response(404) : crow::response(200, result);
     });
 

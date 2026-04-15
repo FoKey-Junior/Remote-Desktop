@@ -9,7 +9,7 @@ class Registration {
   std::string response;
 
   public:
-  Registration(const std::vector<std::string>& user_);
+  Registration(const std::vector<std::string>& user);
   std::string get_response() { return response; };
 };
 
