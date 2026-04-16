@@ -1,11 +1,23 @@
-#include "../include/startwindow.h"
+#include "startwindow.h"
 
 #include <QApplication>
+#include <QLocale>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    StartWindow w;
+
+    QTranslator translator;
+    const QStringList uiLanguages = QLocale::system().uiLanguages();
+    for (const QString &locale : uiLanguages) {
+        const QString baseName = "desktop_" + QLocale(locale).name();
+        if (translator.load(":/i18n/" + baseName)) {
+            a.installTranslator(&translator);
+            break;
+        }
+    }
+    startwindow w;
     w.show();
     return a.exec();
 }

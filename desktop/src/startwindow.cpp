@@ -1,14 +1,14 @@
 #include "startwindow.h"
 #include "./ui_startwindow.h"
 
-StartWindow::StartWindow(QWidget *parent)
+startwindow::startwindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::StartWindow)
+    , ui(new Ui::startwindow)
 {
     ui->setupUi(this);
 }
 
-StartWindow::~StartWindow()
+startwindow::~startwindow()
 {
     delete ui;
 }
