@@ -16,57 +16,40 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-if(APPLE)
-    message(STATUS "Building on macOS")
-elseif(UNIX)
-    message(STATUS "Building on Linux")
-endif()
-
-if(APPLE)
-    list(APPEND CMAKE_PREFIX_PATH
-            /opt/homebrew
-            /usr/local
-    )
-endif()
-
-find_program(PKG_CONFIG_EXECUTABLE NAMES pkg-config pkgconf)
-if(PKG_CONFIG_EXECUTABLE)
-    find_package(PkgConfig)
-endif()
-
-find_package(OpenSSL QUIET)
-
-if(OpenSSL_FOUND)
-    set(OPENSSL_LINK_TARGETS OpenSSL::SSL OpenSSL::Crypto)
-    set(REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIR})
-else()
-    if(PKG_CONFIG_EXECUTABLE)
-        pkg_check_modules(OPENSSL REQUIRED IMPORTED_TARGET openssl)
-        set(OPENSSL_LINK_TARGETS PkgConfig::OPENSSL)
-        set(REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIRS})
-    else()
-        message(FATAL_ERROR "OpenSSL not found")
-    endif()
-endif()
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(OpenSSL REQUIRED)
 
-file(GLOB_RECURSE SOURCES
-        src/*.cpp
+set(src_files
+        src/main.cpp
+        src/startwindow.cpp
 )
 
-add_executable(Remote_Desktop_Client ${SOURCES})
+set(header_files
+        include/startwindow.h
+)
+
+set(ui_files
+        ui/startwindow.ui
+)
+
+add_executable(Remote_Desktop_Client
+        ${src_files}
+        ${header_files}
+        ${ui_files}
+)
 
 target_include_directories(Remote_Desktop_Client PRIVATE
         src
         include
-        ${REMOTE_DESKTOP_OPENSSL_INCLUDE_DIRS}
 )
 
 target_link_libraries(Remote_Desktop_Client PRIVATE
         Qt6::Widgets
         Qt6::Network
-        ${OPENSSL_LINK_TARGETS}
+        OpenSSL::SSL
+        OpenSSL::Crypto
 )
 
 target_compile_definitions(Remote_Desktop_Client PRIVATE
