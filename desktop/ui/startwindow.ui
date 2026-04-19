@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>StartWindow</string>
+   <string>Remote Desktop</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">

@@ -20,4 +20,4 @@ public:
 private:
     Ui::StartWindow *ui;
 };
-#endif // STARTWINDOW_H
+#endif
