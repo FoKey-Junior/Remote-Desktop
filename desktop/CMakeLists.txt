@@ -23,11 +23,11 @@ find_package(OpenSSL REQUIRED)
 
 set(src_files
         src/main.cpp
-        src/startwindow.cpp
+        src/StartWindow.cpp
 )
 
 set(header_files
-        include/startwindow.h
+        include/StartWindow.h
 )
 
 set(ui_files

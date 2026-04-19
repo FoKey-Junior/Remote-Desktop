@@ -1,4 +1,4 @@
-#include "startwindow.h"
+#include "StartWindow.h"
 #include "./ui_startwindow.h"
 
 StartWindow::StartWindow(QWidget *parent)
