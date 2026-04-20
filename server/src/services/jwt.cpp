@@ -1,6 +1,6 @@
-#include "services/JWT.hpp"
+#include "services/jwt.hpp"
 
-std::string JWT::create_token(const std::string& email) {
+std::string jwt::create_token(const std::string& email) {
     auto token = jwt::create()
         .set_type("JWS")
         .set_issuer("auth0")
@@ -10,7 +10,7 @@ std::string JWT::create_token(const std::string& email) {
     return token;
 }
 
-std::string JWT::verification_token(const std::string& token) {
+std::string jwt::verification_token(const std::string& token) {
     const auto verifier = jwt::verify()
         .allow_algorithm(jwt::algorithm::hs256{"secret"})
         .with_issuer("auth0");

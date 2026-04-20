@@ -5,11 +5,11 @@
 #include <optional>
 #include <iostream>
 
-#include "api/Router.hpp"
-#include "api/Registration.hpp"
-#include "api/Authorization.hpp"
-#include "services/Database.hpp"
-#include "services/JWT.hpp"
+#include "api/router.hpp"
+#include "api/registration.hpp"
+#include "api/authorization.hpp"
+#include "services/database.hpp"
+#include "services/jwt.hpp"
 
 namespace {
     std::optional<std::vector<std::string>> parse_user(const crow::request& req) {
@@ -23,11 +23,11 @@ namespace {
     }
 }
 
-void Router::start_server(int port_server) {
+void router::start_server(int port_server) {
     crow::SimpleApp app;
 
-    auto database = std::make_shared<Database>();
-    auto jwt = std::make_shared<JWT>();
+    auto database = std::make_shared<database>();
+    auto jwt = std::make_shared<jwt>();
 
     if (!database->get_status_db()) {
         std::cerr << "DB unavailable, running in degraded mode\n";
@@ -40,7 +40,7 @@ void Router::start_server(int port_server) {
         if (!data) return crow::response(400);
 
         try {
-            Registration registration(*data);
+            registration registration(*data);
             return crow::response(200, registration.get_response());
         } catch (const std::exception& e) {
             std::cerr << "Registration failed: " << e.what() << std::endl;
@@ -53,7 +53,7 @@ void Router::start_server(int port_server) {
         if (!data) return crow::response(400);
 
         try {
-            Authorization authorization(*data);
+            authorization authorization(*data);
             return crow::response(200, authorization.get_response());
         } catch (const std::exception& e) {
             std::cerr << "Authorization failed: " << e.what() << std::endl;

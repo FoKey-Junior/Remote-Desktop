@@ -2,17 +2,17 @@
 #include <string>
 #include <vector>
 
-#include "api/Authorization.hpp"
-#include "services/Database.hpp"
-#include "services/StringHandler.hpp"
-#include "services/JWT.hpp"
+#include "api/authorization.hpp"
+#include "services/database.hpp"
+#include "services/string_handler.hpp"
+#include "services/jwt.hpp"
 
 using namespace std::chrono;
 
-Authorization::Authorization(const std::vector<std::string>& user) {
+authorization::authorization(const std::vector<std::string>& user) {
     const std::string& email = user[0];
     const std::string& password = user[1];
-    const Database database;
+    const database database;
 
     if (const auto error = email_check(email)) {
         response = *error;
@@ -46,6 +46,6 @@ Authorization::Authorization(const std::vector<std::string>& user) {
         return;
     }
 
-    const std::string token = JWT::create_token(email);
+    const std::string token = jwt::create_token(email);
     response = token;
 }

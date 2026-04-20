@@ -6,12 +6,12 @@
 #include <string>
 #include <memory>
 
-class Database {
+class database {
     std::unique_ptr<pqxx::connection> connect;
     bool status_db = false;
 
 public:
-    Database();
+    database();
     [[nodiscard]] bool get_status_db() const { return status_db; }
 
     [[nodiscard]] bool add_user(const std::vector<std::string>& data) const;

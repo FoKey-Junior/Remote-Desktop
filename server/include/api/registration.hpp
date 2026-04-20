@@ -5,11 +5,11 @@
 #include <string>
 #include <vector>
 
-class Registration {
+class registration {
   std::string response;
 
   public:
-  Registration(const std::vector<std::string>& user);
+  registration(const std::vector<std::string>& user);
   std::string get_response() { return response; };
 };
 

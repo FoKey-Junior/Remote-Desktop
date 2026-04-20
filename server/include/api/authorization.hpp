@@ -5,11 +5,11 @@
 #include <string>
 #include <vector>
 
-class Authorization {
+class authorization {
   std::string response;
 
   public:
-  Authorization(const std::vector<std::string>& user);
+  authorization(const std::vector<std::string>& user);
   std::string get_response() { return response; };
 };
 

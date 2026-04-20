@@ -2,7 +2,7 @@
 #include <exception>
 #include "yaml-cpp/yaml.h"
 
-#include "api/Router.hpp"
+#include "api/router.hpp"
 
 int main() {
     try {
@@ -10,7 +10,7 @@ int main() {
         auto server_data = config["server"];
         int port = server_data["port"].as<int>();
 
-        Router router;
+        router router;
         std::cout << "start http server http://localhost:" << port << "/api" << std::endl;
         router.start_server(port);
     }
