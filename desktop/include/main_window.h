@@ -3,12 +3,12 @@
 
 #include <QAbstractItemModel>
 
-class MainMenu : public QAbstractItemModel
+class main_window : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit MainMenu(QObject *parent = nullptr);
+    explicit main_window(QObject *parent = nullptr);
 
     // Header:
     QVariant headerData(int section,

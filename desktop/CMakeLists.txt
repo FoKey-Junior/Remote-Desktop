@@ -23,15 +23,18 @@ find_package(OpenSSL REQUIRED)
 
 set(src_files
         src/main.cpp
-        src/StartWindow.cpp
+        src/start_window.cpp
+        src/main_window.cpp
 )
 
 set(header_files
-        include/StartWindow.h
+        include/start_window.h
+        include/main_window.h
 )
 
 set(ui_files
-        ui/startwindow.ui
+        ui/start_window.ui
+        ui/main_window.ui
 )
 
 add_executable(Remote_Desktop_Client
