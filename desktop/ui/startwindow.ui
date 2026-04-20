@@ -22,6 +22,21 @@
     <height>240</height>
    </size>
   </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>320</width>
+    <height>240</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>320</width>
+    <height>240</height>
+   </size>
+  </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
    <string>Remote Desktop</string>
   </property>
@@ -36,7 +51,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="authorization_tab">
      <attribute name="title">

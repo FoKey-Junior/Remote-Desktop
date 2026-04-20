@@ -6,16 +6,13 @@ pkgs.mkShell {
     gcc
     gnumake
     pkg-config
-
-    yaml-cpp
-    boost
     openssl
-    yaml-cpp
     libsodium
-    crow
     asio
-
     libpqxx
     postgresql
+    yaml-cpp
+    nlohmann_json
+    boost.dev
   ];
 }

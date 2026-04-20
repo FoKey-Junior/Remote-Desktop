@@ -17,6 +17,10 @@ public:
     StartWindow(QWidget *parent = nullptr);
     ~StartWindow();
 
+private slots:
+    void onLoginClicked();
+    void onRegisterClicked();
+
 private:
     Ui::StartWindow *ui;
 };

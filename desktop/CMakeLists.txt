@@ -51,7 +51,3 @@ target_link_libraries(Remote_Desktop_Client PRIVATE
         OpenSSL::SSL
         OpenSSL::Crypto
 )
-
-target_compile_definitions(Remote_Desktop_Client PRIVATE
-        QT_NO_KEYWORDS
-)
