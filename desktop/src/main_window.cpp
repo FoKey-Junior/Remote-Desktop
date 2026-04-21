@@ -1,33 +1,25 @@
 #include "main_window.h"
 
-main_window::main_window(QObject *parent)
+MainWindow::MainWindow(QObject *parent)
     : QAbstractItemModel(parent)
 {}
 
-QVariant main_window::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant MainWindow::headerData(int section, Qt::Orientation orientation, int role) const
 {
     // FIXME: Implement me!
 }
 
-QModelIndex main_window::index(int row, int column, const QModelIndex &parent) const
+QModelIndex MainWindow::index(int row, int column, const QModelIndex &parent) const
 {
     // FIXME: Implement me!
 }
 
-QModelIndex main_window::parent(const QModelIndex &index) const
+QModelIndex MainWindow::parent(const QModelIndex &index) const
 {
     // FIXME: Implement me!
 }
 
-int main_window::rowCount(const QModelIndex &parent) const
-{
-    if (!parent.isValid())
-        return 0;
-
-    // FIXME: Implement me!
-}
-
-int main_window::columnCount(const QModelIndex &parent) const
+int MainWindow::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
         return 0;
@@ -35,7 +27,15 @@ int main_window::columnCount(const QModelIndex &parent) const
     // FIXME: Implement me!
 }
 
-QVariant main_window::data(const QModelIndex &index, int role) const
+int MainWindow::columnCount(const QModelIndex &parent) const
+{
+    if (!parent.isValid())
+        return 0;
+
+    // FIXME: Implement me!
+}
+
+QVariant MainWindow::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
