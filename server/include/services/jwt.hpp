@@ -5,7 +5,7 @@
 #include <string>
 
 
-class jwt {
+class Jwt {
     public:
     static std::string create_token(const std::string& email);
     static std::string verification_token(const std::string& token);

@@ -9,10 +9,10 @@
 
 using namespace std::chrono;
 
-authorization::authorization(const std::vector<std::string>& user) {
+Authorization::Authorization(const std::vector<std::string>& user) {
     const std::string& email = user[0];
     const std::string& password = user[1];
-    const database database;
+    const Database database;
 
     if (const auto error = email_check(email)) {
         response = *error;
@@ -46,6 +46,6 @@ authorization::authorization(const std::vector<std::string>& user) {
         return;
     }
 
-    const std::string token = jwt::create_token(email);
+    const std::string token = Jwt::create_token(email);
     response = token;
 }

@@ -2,9 +2,9 @@
 #define REMOTE_DESKTOP_API_H
 
 
-class router {
+class Router {
 public:
-    void start_server(int port_server);
+    static void start_server(int port_server);
 };
 
 

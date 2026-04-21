@@ -23,11 +23,11 @@ namespace {
     }
 }
 
-void router::start_server(int port_server) {
+void Router::start_server(int port_server) {
     crow::SimpleApp app;
 
-    auto database = std::make_shared<database>();
-    auto jwt = std::make_shared<jwt>();
+    auto database = std::make_shared<Database>();
+    auto jwt = std::make_shared<Jwt>();
 
     if (!database->get_status_db()) {
         std::cerr << "DB unavailable, running in degraded mode\n";
@@ -40,7 +40,7 @@ void router::start_server(int port_server) {
         if (!data) return crow::response(400);
 
         try {
-            registration registration(*data);
+            Registration registration(*data);
             return crow::response(200, registration.get_response());
         } catch (const std::exception& e) {
             std::cerr << "Registration failed: " << e.what() << std::endl;
@@ -53,7 +53,7 @@ void router::start_server(int port_server) {
         if (!data) return crow::response(400);
 
         try {
-            authorization authorization(*data);
+            Authorization authorization(*data);
             return crow::response(200, authorization.get_response());
         } catch (const std::exception& e) {
             std::cerr << "Authorization failed: " << e.what() << std::endl;
@@ -61,7 +61,7 @@ void router::start_server(int port_server) {
         }
     });
 
-    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([&database, &jwt](const crow::request& req) {
+    CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([&database](const crow::request& req) {
         const auto body = crow::json::load(req.body);
 
         if (!body ||
@@ -70,27 +70,27 @@ void router::start_server(int port_server) {
             return crow::response(400);
         }
 
-        return crow::response(database->add_command(jwt->verification_token(body["token"].s()), body["command"].s()) ? 201 : 500);
+        return crow::response(database->add_command(Jwt::verification_token(body["token"].s()), body["command"].s()) ? 201 : 500);
     });
 
-    CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([&database, &jwt](const crow::request& req) {
+    CROW_ROUTE(app, "/api/delete_command").methods("POST"_method)([&database](const crow::request& req) {
         const auto body = crow::json::load(req.body);
 
         if (!body ||!body.has("token") || body["token"].t() != crow::json::type::String) {
             return crow::response(400);
         }
 
-        return crow::response(database->delete_command(jwt->verification_token(body["token"].s())) ? 200 : 404);
+        return crow::response(database->delete_command(Jwt::verification_token(body["token"].s())) ? 200 : 404);
     });
 
-    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([&database, &jwt](const crow::request& req) {
+    CROW_ROUTE(app, "/api/get_command").methods("POST"_method)([&database](const crow::request& req) {
         const auto body = crow::json::load(req.body);
 
         if (!body || !body.has("token") || body["token"].t() != crow::json::type::String) {
             return crow::response(400);
         }
 
-        const auto result = database->get_command(jwt->verification_token(body["token"].s()));
+        const auto result = database->get_command(Jwt::verification_token(body["token"].s()));
         return result.empty() ? crow::response(404) : crow::response(200, result);
     });
 

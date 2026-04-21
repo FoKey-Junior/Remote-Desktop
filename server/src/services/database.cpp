@@ -4,15 +4,15 @@
 
 #include "services/database.hpp"
 
-database::database() {
+Database::Database() {
     try {
         YAML::Node config = YAML::LoadFile("configs.yaml");
         auto postgres_data = config["postgres"];
 
-        const std::string db_name = postgres_data["name"].as<std::string>();
-        const std::string db_user = postgres_data["user"].as<std::string>();
-        const std::string db_host = postgres_data["host"].as<std::string>();
-        const std::string db_password = postgres_data["password"].as<std::string>();
+        const auto db_name = postgres_data["name"].as<std::string>();
+        const auto db_user = postgres_data["user"].as<std::string>();
+        const auto db_host = postgres_data["host"].as<std::string>();
+        const auto db_password = postgres_data["password"].as<std::string>();
 
         const int db_port = postgres_data["port"].as<int>();
         const int db_connect_timeout = postgres_data["connect_timeout"].as<int>();
@@ -32,7 +32,7 @@ database::database() {
     }
 }
 
-bool database::add_user(const std::vector<std::string>& data) const {
+bool Database::add_user(const std::vector<std::string>& data) const {
     if (data.size() < 2 || data[0].empty() || data[1].empty()) return false;
 
     pqxx::work db(*connect);
@@ -45,7 +45,7 @@ bool database::add_user(const std::vector<std::string>& data) const {
     return !result.empty();
 }
 
-bool database::uniqueness_check(const std::string& email_user) const {
+bool Database::uniqueness_check(const std::string& email_user) const {
     if (email_user.empty()) return false;
 
     pqxx::work db(*connect);
@@ -57,7 +57,7 @@ bool database::uniqueness_check(const std::string& email_user) const {
     return result.empty();
 }
 
-bool database::get_password_hash(const std::string& email_user, std::string& out_hash) const {
+bool Database::get_password_hash(const std::string& email_user, std::string& out_hash) const {
     if (email_user.empty()) return false;
 
     pqxx::work db(*connect);
@@ -71,7 +71,7 @@ bool database::get_password_hash(const std::string& email_user, std::string& out
     return true;
 }
 
-bool database::add_command(const std::string& email_user, const std::string& command) const {
+bool Database::add_command(const std::string& email_user, const std::string& command) const {
     if (email_user.empty() || command.empty()) return false;
 
     pqxx::work db(*connect);
@@ -85,7 +85,7 @@ bool database::add_command(const std::string& email_user, const std::string& com
     return !result.empty();
 }
 
-bool database::delete_command(const std::string& email_user) const {
+bool Database::delete_command(const std::string& email_user) const {
     if (email_user.empty()) return false;
 
     pqxx::work db(*connect);
@@ -101,7 +101,7 @@ bool database::delete_command(const std::string& email_user) const {
     return !result.empty();
 }
 
-std::string database::get_command(const std::string& email_user) const {
+std::string Database::get_command(const std::string& email_user) const {
     if (email_user.empty()) return "";
 
     pqxx::work db(*connect);
