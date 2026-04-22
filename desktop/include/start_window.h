@@ -1,12 +1,9 @@
-#ifndef STARTWINDOW_H
-#define STARTWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class StartWindow;
-}
+namespace Ui { class StartWindow; }
 QT_END_NAMESPACE
 
 class StartWindow : public QMainWindow
@@ -14,14 +11,13 @@ class StartWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    StartWindow(QWidget *parent = nullptr);
-    ~StartWindow() override;
+    explicit StartWindow(QWidget* parent = nullptr);
+    ~StartWindow();
 
 private slots:
-    void onLoginClicked();
-    void onRegisterClicked();
+    void on_login_button_clicked();
+    void on_register_button_clicked();
 
 private:
-    Ui::StartWindow *ui;
+    Ui::StartWindow* ui;
 };
-#endif

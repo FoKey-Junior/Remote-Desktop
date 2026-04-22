@@ -9,8 +9,6 @@ pkgs.mkShell {
 
     qt6.qtbase
     qt6.qttools
-
-    openssl
   ];
 
   shellHook = ''
