@@ -25,11 +25,13 @@ set(src_files
         src/main.cpp
         src/start_window.cpp
         src/main_window.cpp
+        src/string_handler.cpp
 )
 
 set(header_files
         include/start_window.h
         include/main_window.h
+        include/string_handler.h
 )
 
 set(ui_files

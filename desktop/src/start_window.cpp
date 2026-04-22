@@ -1,17 +1,17 @@
 #include <QRegularExpression>
-#include <QMessageBox>
-#include <QDebug>
 #include "start_window.h"
+#include "string_handler.h"
 #include "ui_start_window.h"
 
 StartWindow::StartWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::StartWindow) {
     ui->setupUi(this);
+    qApp->setStyleSheet("QLabel { color: red; }");
 
     setFixedSize(320, 241);
     setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
 
-    connect(ui->button_login, &QPushButton::clicked, this, &StartWindow::onLoginClicked);
-    connect(ui->button_register, &QPushButton::clicked, this, &StartWindow::onRegisterClicked);
+    connect(ui->login_button, &QPushButton::clicked, this, &StartWindow::onLoginClicked);
+    connect(ui->register_button, &QPushButton::clicked, this, &StartWindow::onRegisterClicked);
 }
 
 StartWindow::~StartWindow() {
@@ -23,17 +23,17 @@ void StartWindow::onLoginClicked() {
     const QString password = ui->login_input_password->text();
     static const QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)");
 
+    ui->login_error_email->clear();
+    ui->login_error_password->clear();
+    ui->login_error->clear();
+
     if (email.isEmpty() || password.isEmpty()) {
-        QMessageBox::warning(this, "Ошибка", "Заполните все поля");
+        ui->login_error->setText("Заполните все поля");
         return;
     }
 
-    if (!regex.match(email).hasMatch()) {
-        QMessageBox::warning(this, "Ошибка", "Некорректный email");
-        return;
-    }
-
-    qDebug() << "Login clicked email: " << email << " password: " << password;
+    if (!StringHandler::validateEmail(email, ui->login_error_email)) return;
+    if (!StringHandler::validatePassword(password, ui->login_error_password)) return;
 }
 
 void StartWindow::onRegisterClicked() {
@@ -41,21 +41,26 @@ void StartWindow::onRegisterClicked() {
     const QString password_1 = ui->register_input_password->text();
     const QString password_2 = ui->register_input_password_2->text();
 
+    ui->register_error_email->clear();
+    ui->register_error_password->clear();
+    ui->register_error->clear();
+
     if (email.isEmpty() || password_1.isEmpty() || password_2.isEmpty()) {
-        QMessageBox::warning(this, "Ошибка", "Заполните все поля");
+        ui->register_error->setText("Заполните все поля");
         return;
     }
 
-    static const QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)");
-    if (!regex.match(email).hasMatch()) {
-        QMessageBox::warning(this, "Ошибка", "Некорректный email");
+
+    if (email.isEmpty() || password_1.isEmpty() || password_2.isEmpty()) {
+        ui->register_error->setText("Заполните все поля");
         return;
     }
 
-    if (password_1 == password_2) {
-        QMessageBox::warning(this, "Ошибка", "Пароли не совпадают");
-        return;
+    if (!StringHandler::validateEmail(email, ui->register_error_email)) return;
+
+    if (password_1 != password_2) {
+        ui->register_error_password->setText("Пароли не совпадают"); return;
     }
 
-    qDebug() << "Register clicked email: " << email << " password_1: " << password_1 << " password_2: " << password_2;
+    if (!StringHandler::validatePassword(password_1, ui->register_error_password)) return;
 }
