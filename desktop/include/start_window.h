@@ -15,7 +15,7 @@ class StartWindow : public QMainWindow
 
 public:
     StartWindow(QWidget *parent = nullptr);
-    ~StartWindow();
+    ~StartWindow() override;
 
 private slots:
     void onLoginClicked();
