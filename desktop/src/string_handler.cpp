@@ -7,6 +7,7 @@
 #include <QUrl>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QDebug>
 
 static void set_error(QLabel* label, const QString& message)
 {
@@ -16,24 +17,28 @@ static void set_error(QLabel* label, const QString& message)
 
 bool StringHandler::validateEmail(const QString& email, QLabel* error_label)
 {
-    static const QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)" );
+    static const QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)");
 
-    if (email.isEmpty()) {
+    if (email.isEmpty())
+    {
         set_error(error_label, "Email пустой");
         return false;
     }
 
-    if (email.size() < 8) {
+    if (email.size() < 8)
+    {
         set_error(error_label, "Минимум 8 символов");
         return false;
     }
 
-    if (email.size() > 64) {
+    if (email.size() > 64)
+    {
         set_error(error_label, "Максимум 64 символа");
         return false;
     }
 
-    if (!regex.match(email).hasMatch()) {
+    if (!regex.match(email).hasMatch())
+    {
         set_error(error_label, "Некорректный email");
         return false;
     }
@@ -43,17 +48,20 @@ bool StringHandler::validateEmail(const QString& email, QLabel* error_label)
 
 bool StringHandler::validatePassword(const QString& password, QLabel* error_label)
 {
-    if (password.isEmpty()) {
+    if (password.isEmpty())
+    {
         set_error(error_label, "Пароль пустой");
         return false;
     }
 
-    if (password.size() < 8) {
+    if (password.size() < 8)
+    {
         set_error(error_label, "Минимум 8 символов");
         return false;
     }
 
-    if (password.size() > 64) {
+    if (password.size() > 64)
+    {
         set_error(error_label, "Максимум 64 символа");
         return false;
     }
@@ -78,7 +86,15 @@ static void send_request(const QString& url_str, const QString& email, const QSt
 
     QNetworkReply* reply = manager->post(request, data);
 
-    QObject::connect(reply, &QNetworkReply::finished, [manager, reply]() {
+    QObject::connect(reply, &QNetworkReply::finished, [manager, reply]()
+    {
+        const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        const QByteArray response = reply->readAll();
+
+        switch (status) {
+            case 200: qDebug() << response; break;
+        }
+
         reply->deleteLater();
         manager->deleteLater();
     });
