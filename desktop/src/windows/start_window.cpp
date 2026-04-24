@@ -1,6 +1,7 @@
-#include "start_window.h"
 #include "ui_start_window.h"
-#include "string_handler.h"
+#include "windows/start_window.h"
+#include "services/string_handler.h"
+#include "services/requests.h"
 
 StartWindow::StartWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -20,7 +21,7 @@ StartWindow::~StartWindow()
     delete ui;
 }
 
-void StartWindow::on_login_button_clicked()
+void StartWindow::on_login_button_clicked() const
 {
     const QString email = ui->login_input_email->text();
     const QString password = ui->login_input_password->text();
@@ -29,13 +30,13 @@ void StartWindow::on_login_button_clicked()
     ui->login_error_password->clear();
     ui->login_error->clear();
 
-    if (!StringHandler::validateEmail(email, ui->login_error_email)) return;
-    if (!StringHandler::validatePassword(password, ui->login_error_password)) return;
+    if (!StringHandler::validate_email(email, ui->login_error_email)) return;
+    if (!StringHandler::validate_password(password, ui->login_error_password)) return;
 
-    StringHandler::authorization(email, password);
+    Requests::send_request("http://localhost:4000/api/authorization", email, password);
 }
 
-void StartWindow::on_register_button_clicked()
+void StartWindow::on_register_button_clicked() const
 {
     const QString email = ui->register_input_email->text();
     const QString password_1 = ui->register_input_password->text();
@@ -45,9 +46,9 @@ void StartWindow::on_register_button_clicked()
     ui->register_error_password->clear();
     ui->register_error->clear();
 
-    if (!StringHandler::validateEmail(email, ui->register_error_email)) return;
-    if (!StringHandler::validatePassword(password_1, ui->register_error_password)) return;
-    if (!StringHandler::validatePassword(password_2, ui->register_error_password)) return;
+    if (!StringHandler::validate_email(email, ui->register_error_email)) return;
+    if (!StringHandler::validate_password(password_1, ui->register_error_password)) return;
+    if (!StringHandler::validate_password(password_2, ui->register_error_password)) return;
 
     if (password_1 != password_2)
     {
@@ -55,5 +56,5 @@ void StartWindow::on_register_button_clicked()
         return;
     }
 
-    StringHandler::registration(email, password_1);
+    Requests::send_request("http://localhost:4000/api/registration", email, password_1);
 }
