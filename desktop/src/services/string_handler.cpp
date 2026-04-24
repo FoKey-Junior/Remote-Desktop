@@ -11,12 +11,6 @@ bool StringHandler::validate_email(const QString& email, QLabel* error_label)
 {
     static const QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)");
 
-    if (email.isEmpty())
-    {
-        set_error(error_label, "Email пустой");
-        return false;
-    }
-
     if (email.size() < 8)
     {
         set_error(error_label, "Минимум 8 символов");
@@ -40,12 +34,6 @@ bool StringHandler::validate_email(const QString& email, QLabel* error_label)
 
 bool StringHandler::validate_password(const QString& password, QLabel* error_label)
 {
-    if (password.isEmpty())
-    {
-        set_error(error_label, "Пароль пустой");
-        return false;
-    }
-
     if (password.size() < 8)
     {
         set_error(error_label, "Минимум 8 символов");
