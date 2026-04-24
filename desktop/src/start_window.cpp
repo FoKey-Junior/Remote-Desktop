@@ -29,6 +29,13 @@ void StartWindow::on_login_button_clicked()
     ui->login_error_password->clear();
     ui->login_error->clear();
 
+    if (email.isEmpty() || password.isEmpty())
+    {
+        ui->login_error->setText("Заполните все поля");
+        return;
+    }
+
+
     if (!StringHandler::validateEmail(email, ui->login_error_email)) return;
     if (!StringHandler::validatePassword(password, ui->login_error_password)) return;
 
@@ -44,6 +51,12 @@ void StartWindow::on_register_button_clicked()
     ui->register_error_email->clear();
     ui->register_error_password->clear();
     ui->register_error->clear();
+
+    if (email.isEmpty() || password_1.isEmpty() || password_2.isEmpty())
+    {
+        ui->register_error->setText("Заполните все поля");
+        return;
+    }
 
     if (!StringHandler::validateEmail(email, ui->register_error_email)) return;
     if (!StringHandler::validatePassword(password_1, ui->register_error_password)) return;
