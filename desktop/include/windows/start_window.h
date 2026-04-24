@@ -12,11 +12,11 @@ class StartWindow : public QMainWindow
 
 public:
     explicit StartWindow(QWidget* parent = nullptr);
-    ~StartWindow();
+    ~StartWindow() override;
 
 private slots:
-    void on_login_button_clicked();
-    void on_register_button_clicked();
+    void on_login_button_clicked() const;
+    void on_register_button_clicked() const;
 
 private:
     Ui::StartWindow* ui;

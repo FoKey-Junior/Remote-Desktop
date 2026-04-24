@@ -1,4 +1,4 @@
-#include "main_window.h"
+#include "windows/main_window.h"
 
 MainWindow::MainWindow(QObject *parent)
     : QAbstractItemModel(parent)

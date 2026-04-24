@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
 
-set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
-
-if(POLICY CMP0167)
-    cmake_policy(SET CMP0167 NEW)
-endif()
-
 project(Remote_Desktop_Client LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -21,33 +15,27 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(OpenSSL REQUIRED)
 
-set(src_files
-        src/main.cpp
-        src/start_window.cpp
-        src/main_window.cpp
-        src/string_handler.cpp
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
 
-set(header_files
-        include/start_window.h
-        include/main_window.h
-        include/string_handler.h
+file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/include/*.h
 )
 
-set(ui_files
-        ui/start_window.ui
-        ui/main_window.ui
+file(GLOB_RECURSE UI_FILES CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/ui/*.ui
 )
 
 add_executable(Remote_Desktop_Client
-        ${src_files}
-        ${header_files}
-        ${ui_files}
+        ${SRC_FILES}
+        ${HEADER_FILES}
+        ${UI_FILES}
 )
 
 target_include_directories(Remote_Desktop_Client PRIVATE
-        src
-        include
+        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/include
 )
 
 target_link_libraries(Remote_Desktop_Client PRIVATE
@@ -56,3 +44,9 @@ target_link_libraries(Remote_Desktop_Client PRIVATE
         OpenSSL::SSL
         OpenSSL::Crypto
 )
+
+if(APPLE)
+    message(STATUS "Building on macOS")
+elseif(UNIX)
+    message(STATUS "Building on Linux (NixOS compatible)")
+endif()
