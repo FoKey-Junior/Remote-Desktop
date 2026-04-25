@@ -5,15 +5,9 @@
 
 StartWindow::StartWindow(QWidget* parent)
     : QMainWindow(parent)
-    , ui(new Ui::StartWindow)
+      , ui(new Ui::StartWindow)
 {
     ui->setupUi(this);
-
-    connect(ui->login_button, &QPushButton::clicked,
-            this, &StartWindow::on_login_button_clicked);
-
-    connect(ui->register_button, &QPushButton::clicked,
-            this, &StartWindow::on_register_button_clicked);
 }
 
 StartWindow::~StartWindow()
