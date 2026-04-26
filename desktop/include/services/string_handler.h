@@ -2,8 +2,7 @@
 
 #include <QLabel>
 
-class StringHandler
-{
+class StringHandler {
 public:
     static bool validate_email(const QString& email, QLabel* error_label);
     static bool validate_password(const QString& password, QLabel* error_label);
