@@ -8,8 +8,7 @@
 #include "services/requests.h"
 #include "services/jwt.h"
 
-void Requests::send_request(const QString& url_str, const QString& email, const QString& password)
-{
+QString Requests::send_request(const QString& url_str, const QString& email, const QString& password) {
     auto* manager = new QNetworkAccessManager();
 
     QUrl url(url_str);
@@ -30,13 +29,15 @@ void Requests::send_request(const QString& url_str, const QString& email, const 
         const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         const QByteArray response = reply->readAll();
 
+        reply->deleteLater();
+        manager->deleteLater();
 
         if (status == 200) {
             const std::string token = response.toStdString();
             Jwt::save_token(token);
+            return "";
+        } else {
+            return response;
         }
-
-        reply->deleteLater();
-        manager->deleteLater();
     });
 }

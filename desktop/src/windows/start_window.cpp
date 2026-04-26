@@ -9,6 +9,8 @@
 #include "services/string_handler.h"
 #include "services/requests.h"
 
+Requests requests;
+
 StartWindow::StartWindow(QWidget* parent)
     : QMainWindow(parent)
       , ui(new Ui::StartWindow)
@@ -39,12 +41,16 @@ void StartWindow::on_login_button_clicked()
     if (!StringHandler::validate_email(email, ui->login_error_email)) return;
     if (!StringHandler::validate_password(password, ui->login_error_password)) return;
 
-    Requests::send_request("http://localhost:4000/api/authorization", email, password);
+    QString result = requests.send_request("http://localhost:4000/api/authorization", email, password);
+    if (result == "") {
+        auto* main_window = new MainWindow();
 
-    auto* main_window = new MainWindow();
-    main_window->setAttribute(Qt::WA_DeleteOnClose);
-    main_window->show();
-    this->close();
+        main_window->setAttribute(Qt::WA_DeleteOnClose);
+        main_window->show();
+        this->close();
+    } else {
+        ui->login_error->setText(result);
+    }
 }
 
 void StartWindow::on_register_button_clicked()
@@ -73,10 +79,14 @@ void StartWindow::on_register_button_clicked()
         return;
     }
 
-    Requests::send_request("http://localhost:4000/api/registration", email, password_1);
+    QString result = requests.send_request("http://localhost:4000/api/registration", email, password_1);
+    if (result == "") {
+        auto* main_window = new MainWindow();
 
-    auto* main_window = new MainWindow();
-    main_window->setAttribute(Qt::WA_DeleteOnClose);
-    main_window->show();
-    this->close();
+        main_window->setAttribute(Qt::WA_DeleteOnClose);
+        main_window->show();
+        this->close();
+    } else {
+        ui->register_error->setText(result);
+    }
 }
