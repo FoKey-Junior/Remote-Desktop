@@ -1,5 +1,4 @@
-#ifndef REMOTE_DESKTOP_DB_H
-#define REMOTE_DESKTOP_DB_H
+#pragma once
 
 #include <pqxx/pqxx>
 #include <vector>
@@ -22,5 +21,3 @@ public:
     [[nodiscard]] bool delete_command(const std::string& email_user) const;
     [[nodiscard]] std::string get_command(const std::string& email_user) const;
 };
-
-#endif
