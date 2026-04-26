@@ -14,6 +14,8 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(OpenSSL REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SODIUM REQUIRED libsodium)
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
         ${CMAKE_SOURCE_DIR}/src/*.cpp
@@ -36,13 +38,17 @@ add_executable(Remote_Desktop_Client
 target_include_directories(Remote_Desktop_Client PRIVATE
         ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_SOURCE_DIR}/include
+        ${SODIUM_INCLUDE_DIRS}
 )
+
+target_link_directories(Remote_Desktop_Client PRIVATE ${SODIUM_LIBRARY_DIRS})
 
 target_link_libraries(Remote_Desktop_Client PRIVATE
         Qt6::Widgets
         Qt6::Network
         OpenSSL::SSL
         OpenSSL::Crypto
+        ${SODIUM_LIBRARIES}
 )
 
 if(APPLE)

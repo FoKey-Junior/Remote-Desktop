@@ -15,8 +15,8 @@ public:
     ~StartWindow() override;
 
 private slots:
-    void on_login_button_clicked() const;
-    void on_register_button_clicked() const;
+    void on_login_button_clicked();
+    void on_register_button_clicked();
 
 private:
     Ui::StartWindow* ui;

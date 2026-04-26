@@ -1,45 +1,15 @@
 #include "windows/main_window.h"
+#include "ui_main_window.h"
 
-MainWindow::MainWindow(QObject *parent)
-    : QAbstractItemModel(parent)
-{}
-
-QVariant MainWindow::headerData(int section, Qt::Orientation orientation, int role) const
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
-    // FIXME: Implement me!
+    ui->setupUi(this);
 }
 
-QModelIndex MainWindow::index(int row, int column, const QModelIndex &parent) const
+MainWindow::~MainWindow()
 {
-    // FIXME: Implement me!
+    delete ui;
 }
 
-QModelIndex MainWindow::parent(const QModelIndex &index) const
-{
-    // FIXME: Implement me!
-}
-
-int MainWindow::rowCount(const QModelIndex &parent) const
-{
-    if (!parent.isValid())
-        return 0;
-
-    // FIXME: Implement me!
-}
-
-int MainWindow::columnCount(const QModelIndex &parent) const
-{
-    if (!parent.isValid())
-        return 0;
-
-    // FIXME: Implement me!
-}
-
-QVariant MainWindow::data(const QModelIndex &index, int role) const
-{
-    if (!index.isValid())
-        return QVariant();
-
-    // FIXME: Implement me!
-    return QVariant();
-}

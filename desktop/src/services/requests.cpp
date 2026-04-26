@@ -1,11 +1,12 @@
 #include <QRegularExpression>
-#include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDebug>
+
 #include "services/requests.h"
+#include "services/jwt.h"
 
 void Requests::send_request(const QString& url_str, const QString& email, const QString& password)
 {
@@ -29,8 +30,10 @@ void Requests::send_request(const QString& url_str, const QString& email, const 
         const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         const QByteArray response = reply->readAll();
 
-        switch (status) {
-            case 200: qDebug() << response; break;
+
+        if (status == 200) {
+            const std::string token = response.toStdString();
+            Jwt::save_token(token);
         }
 
         reply->deleteLater();

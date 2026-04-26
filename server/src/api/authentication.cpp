@@ -7,9 +7,7 @@
 #include "services/string_handler.hpp"
 #include "services/jwt.hpp"
 
-using namespace std::chrono;
-
-Result Authentication::authorization(const std::vector<std::string>& user) {
+Result Authentication::registration(const std::vector<std::string>& user) {
     const Database database;
     Result result;
 
@@ -36,20 +34,30 @@ Result Authentication::authorization(const std::vector<std::string>& user) {
         }
     }
 
-    std::string stored_hash;
-
-    if (!database.get_password_hash(email, stored_hash)) {
-        result.response = "Пользователь с таким именем не существует";
-        result.status = 404;
+    if (!database.uniqueness_check(email)) {
+        result.response = "Пользователь с таким именем уже существует";
+        result.status = 409;
         return result;
     }
 
-    if (crypto_pwhash_str_verify(
-            stored_hash.c_str(),
+    char hashed_password[crypto_pwhash_STRBYTES];
+    if (crypto_pwhash_str(
+            hashed_password,
             password.c_str(),
-            password.size()) != 0) {
-        result.response = "Неверный пароль";
-        result.status = 401;
+            password.size(),
+            crypto_pwhash_OPSLIMIT_INTERACTIVE,
+            crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
+        result.response = "Ошибка хеширования пароля";
+        result.status = 400;
+        return result;
+    }
+
+    std::vector<std::string> data_hashed = user;
+    data_hashed[1] = hashed_password;
+
+    if (!database.add_user(data_hashed)) {
+        result.response = "Не удалось добавить пользователя в базу данных";
+        result.status = 400;
         return result;
     }
 

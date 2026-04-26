@@ -1,5 +1,11 @@
+#include <QCloseEvent>
+
 #include "ui_start_window.h"
+#include "ui_main_window.h"
+
 #include "windows/start_window.h"
+#include "windows/main_window.h"
+
 #include "services/string_handler.h"
 #include "services/requests.h"
 
@@ -15,7 +21,7 @@ StartWindow::~StartWindow()
     delete ui;
 }
 
-void StartWindow::on_login_button_clicked() const
+void StartWindow::on_login_button_clicked()
 {
     const QString email = ui->login_input_email->text();
     const QString password = ui->login_input_password->text();
@@ -34,9 +40,14 @@ void StartWindow::on_login_button_clicked() const
     if (!StringHandler::validate_password(password, ui->login_error_password)) return;
 
     Requests::send_request("http://localhost:4000/api/authorization", email, password);
+
+    auto* main_window = new MainWindow();
+    main_window->setAttribute(Qt::WA_DeleteOnClose);
+    main_window->show();
+    this->close();
 }
 
-void StartWindow::on_register_button_clicked() const
+void StartWindow::on_register_button_clicked()
 {
     const QString email = ui->register_input_email->text();
     const QString password_1 = ui->register_input_password->text();
@@ -63,4 +74,9 @@ void StartWindow::on_register_button_clicked() const
     }
 
     Requests::send_request("http://localhost:4000/api/registration", email, password_1);
+
+    auto* main_window = new MainWindow();
+    main_window->setAttribute(Qt::WA_DeleteOnClose);
+    main_window->show();
+    this->close();
 }

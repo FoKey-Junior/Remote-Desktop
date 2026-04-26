@@ -1,28 +1,21 @@
-#ifndef MAINMENU_H
-#define MAINMENU_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include <QAbstractItemModel>
+#include <QMainWindow>
 
-class MainWindow : public QAbstractItemModel
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QObject *parent = nullptr);
-
-    QVariant headerData(int section,
-                        Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const override;
-
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-    QModelIndex parent(const QModelIndex &index) const override;
-
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
 private:
+    Ui::MainWindow *ui;
 };
-
-#endif
+#endif // MAINWINDOW_H

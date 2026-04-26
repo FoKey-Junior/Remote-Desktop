@@ -6,8 +6,7 @@
 #include <iostream>
 
 #include "api/router.hpp"
-#include "api/registration.hpp"
-#include "api/authorization.hpp"
+#include "api/authentication.hpp"
 #include "services/database.hpp"
 #include "services/jwt.hpp"
 
@@ -26,6 +25,7 @@ namespace {
 void Router::start_server(int port_server) {
     crow::SimpleApp app;
 
+    auto authentication = std::make_shared<Authentication>();
     auto database = std::make_shared<Database>();
     auto jwt = std::make_shared<Jwt>();
 
@@ -35,30 +35,20 @@ void Router::start_server(int port_server) {
 
     CROW_ROUTE(app, "/api").methods("GET"_method)([]() { return crow::response(200, "Server is working properly"); });
 
-    CROW_ROUTE(app, "/api/registration").methods("POST"_method)([](const crow::request& req) {
+    CROW_ROUTE(app, "/api/registration").methods("POST"_method)([&authentication](const crow::request& req) {
         const auto data = parse_user(req);
         if (!data) return crow::response(400);
 
-        try {
-            Registration registration(*data);
-            return crow::response(200, registration.get_response());
-        } catch (const std::exception& e) {
-            std::cerr << "Registration failed: " << e.what() << std::endl;
-            return crow::response(500);
-        }
+        const Result result = authentication->registration(*data);
+        return crow::response(result.status, result.response);
     });
 
-    CROW_ROUTE(app, "/api/authorization").methods("POST"_method)([](const crow::request& req) {
+    CROW_ROUTE(app, "/api/authorization").methods("POST"_method)([&authentication](const crow::request& req) {
         const auto data = parse_user(req);
         if (!data) return crow::response(400);
 
-        try {
-            Authorization authorization(*data);
-            return crow::response(200, authorization.get_response());
-        } catch (const std::exception& e) {
-            std::cerr << "Authorization failed: " << e.what() << std::endl;
-            return crow::response(500);
-        }
+        const Result result = authentication->authorization(*data);
+        return crow::response(result.status, result.response);
     });
 
     CROW_ROUTE(app, "/api/new_command").methods("POST"_method)([&database](const crow::request& req) {
