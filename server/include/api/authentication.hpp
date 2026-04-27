@@ -4,7 +4,7 @@
 #include <vector>
 
 struct Result {
-  int status;
+  int status = 200;
   std::string response;
 };
 

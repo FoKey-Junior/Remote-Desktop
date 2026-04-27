@@ -27,7 +27,7 @@ QString Requests::send_request(const QString& url_str, const QString& email, con
     QObject::connect(reply, &QNetworkReply::finished, [manager, reply]()
     {
         const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        const QByteArray response = reply->readAll();
+        const QString response = reply->readAll();
 
         reply->deleteLater();
         manager->deleteLater();
@@ -35,7 +35,7 @@ QString Requests::send_request(const QString& url_str, const QString& email, con
         if (status == 200) {
             const std::string token = response.toStdString();
             Jwt::save_token(token);
-            return "";
+            return QString("");
         } else {
             return response;
         }

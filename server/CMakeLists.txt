@@ -116,6 +116,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_executable(Remote_Desktop ${SOURCES})
+set_target_properties(Remote_Desktop PROPERTIES OUTPUT_NAME remote_desktop_server)
 
 target_include_directories(Remote_Desktop PRIVATE
         src
