@@ -1,5 +1,6 @@
 #include <QRegularExpression>
 #include <QNetworkReply>
+#include <QEventLoop>
 #include <QUrl>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -13,7 +14,6 @@ QString Requests::send_request(const QString& url_str, const QString& email, con
 
     QUrl url(url_str);
     QNetworkRequest request(url);
-
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QJsonObject json;
@@ -21,23 +21,23 @@ QString Requests::send_request(const QString& url_str, const QString& email, con
     json["password"] = password;
 
     QByteArray data = QJsonDocument(json).toJson();
-
     QNetworkReply* reply = manager->post(request, data);
 
-    QObject::connect(reply, &QNetworkReply::finished, [manager, reply]()
-    {
-        const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        const QString response = reply->readAll();
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
 
-        reply->deleteLater();
-        manager->deleteLater();
+    const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    const QString response = reply->readAll();
 
-        if (status == 200) {
-            const std::string token = response.toStdString();
-            Jwt::save_token(token);
-            return QString("");
-        } else {
-            return response;
-        }
-    });
+    reply->deleteLater();
+    manager->deleteLater();
+
+    if (status == 200) {
+        const std::string token = response.toStdString();
+        Jwt::save_token(token);
+        return QString("");
+    } else {
+        return response;
+    }
 }
