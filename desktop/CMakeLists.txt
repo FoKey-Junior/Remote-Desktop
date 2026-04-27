@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(Remote_Desktop_Client LANGUAGES CXX)
+project(remote_desktop_client LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,21 +29,21 @@ file(GLOB_RECURSE UI_FILES CONFIGURE_DEPENDS
         ${CMAKE_SOURCE_DIR}/ui/*.ui
 )
 
-add_executable(Remote_Desktop_Client
+add_executable(remote_desktop_client
         ${SRC_FILES}
         ${HEADER_FILES}
         ${UI_FILES}
 )
 
-target_include_directories(Remote_Desktop_Client PRIVATE
+target_include_directories(remote_desktop_client PRIVATE
         ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_SOURCE_DIR}/include
         ${SODIUM_INCLUDE_DIRS}
 )
 
-target_link_directories(Remote_Desktop_Client PRIVATE ${SODIUM_LIBRARY_DIRS})
+target_link_directories(remote_desktop_client PRIVATE ${SODIUM_LIBRARY_DIRS})
 
-target_link_libraries(Remote_Desktop_Client PRIVATE
+target_link_libraries(remote_desktop_client PRIVATE
         Qt6::Widgets
         Qt6::Network
         OpenSSL::SSL
