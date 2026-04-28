@@ -41,6 +41,8 @@ void StartWindow::on_login_button_clicked()
     if (!StringHandler::validate_email(email, ui->login_error_email)) return;
     if (!StringHandler::validate_password(password, ui->login_error_password)) return;
 
+    ui->login_error->setText("Запрос отправляется...");
+
     if (const QString result = requests.send_request("http://localhost:4000/api/authorization", email, password); result == "") {
         auto* main_window = new MainWindow();
 
@@ -77,6 +79,8 @@ void StartWindow::on_register_button_clicked()
         ui->register_error->setText("Пароль должен совпадать");
         return;
     }
+
+    ui->register_error->setText("Запрос отправляется...");
 
     if (const QString result = requests.send_request("http://localhost:4000/api/registration", email, password_1); result == "") {
         auto* main_window = new MainWindow();
