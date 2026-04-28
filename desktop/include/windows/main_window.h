@@ -15,5 +15,6 @@ public:
     ~MainWindow();
 
 private:
+    std::string token;
     Ui::MainWindow *ui;
 };

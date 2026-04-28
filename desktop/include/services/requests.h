@@ -4,5 +4,5 @@
 
 class Requests {
 public:
-    QString send_request(const QString& url_str, const QString& email, const QString& password);
+    static QString send_request(const QString& url_str, const QString& email, const QString& password);
 };
