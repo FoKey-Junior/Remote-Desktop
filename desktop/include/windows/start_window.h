@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QLabel>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class StartWindow; }
@@ -20,4 +22,5 @@ private slots:
 
 private:
     Ui::StartWindow* ui;
+    QTimer* loading_animation(QLabel* label, const QString& base_text);
 };

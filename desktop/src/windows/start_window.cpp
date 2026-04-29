@@ -1,9 +1,10 @@
-#include <QCloseEvent>
-
 #include "ui_start_window.h"
 #include "ui_main_window.h"
 
 #include "windows/start_window.h"
+
+#include <qdatetime.h>
+
 #include "windows/main_window.h"
 
 #include "services/string_handler.h"
@@ -23,8 +24,26 @@ StartWindow::~StartWindow()
     delete ui;
 }
 
-void StartWindow::on_login_button_clicked()
+QTimer* StartWindow::loading_animation(QLabel* label, const QString& base_text)
 {
+    label->setText(base_text);
+    QTimer* timer = new QTimer(label);
+
+    connect(timer, &QTimer::timeout, this, [label, base_text]() {
+        QString current_text = label->text();
+
+        if (current_text.endsWith("...")) {
+            label->setText(base_text);
+        } else {
+            label->setText(current_text + ".");
+        }
+    });
+
+    timer->start(500);
+    return timer;
+}
+
+void StartWindow::on_login_button_clicked() {
     const QString email = ui->login_input_email->text();
     const QString password = ui->login_input_password->text();
 
@@ -41,9 +60,13 @@ void StartWindow::on_login_button_clicked()
     if (!StringHandler::validate_email(email, ui->login_error_email)) return;
     if (!StringHandler::validate_password(password, ui->login_error_password)) return;
 
-    ui->login_error->setText("Запрос отправляется...");
+    QTimer* anim_timer = loading_animation(ui->login_error, "Запрос отправляется");
+    const QString result = requests.send_request("http://localhost:4000/api/authorization", email, password);
 
-    if (const QString result = requests.send_request("http://localhost:4000/api/authorization", email, password); result == "") {
+    anim_timer->stop();
+    anim_timer->deleteLater();
+
+    if (result.isEmpty()) {
         auto* main_window = new MainWindow();
 
         main_window->setAttribute(Qt::WA_DeleteOnClose);
@@ -54,8 +77,7 @@ void StartWindow::on_login_button_clicked()
     }
 }
 
-void StartWindow::on_register_button_clicked()
-{
+void StartWindow::on_register_button_clicked() {
     const QString email = ui->register_input_email->text();
     const QString password_1 = ui->register_input_password->text();
     const QString password_2 = ui->register_input_password_2->text();
@@ -80,9 +102,13 @@ void StartWindow::on_register_button_clicked()
         return;
     }
 
-    ui->register_error->setText("Запрос отправляется...");
+    QTimer* anim_timer = loading_animation(ui->register_error, "Запрос отправляется");
+    const QString result = requests.send_request("http://localhost:4000/api/registration", email, password_1);
 
-    if (const QString result = requests.send_request("http://localhost:4000/api/registration", email, password_1); result == "") {
+    anim_timer->stop();
+    anim_timer->deleteLater();
+
+    if (result.isEmpty()) {
         auto* main_window = new MainWindow();
 
         main_window->setAttribute(Qt::WA_DeleteOnClose);
