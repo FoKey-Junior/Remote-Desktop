@@ -14,18 +14,15 @@ Requests requests;
 
 StartWindow::StartWindow(QWidget* parent)
     : QMainWindow(parent)
-      , ui(new Ui::StartWindow)
-{
+      , ui(new Ui::StartWindow) {
     ui->setupUi(this);
 }
 
-StartWindow::~StartWindow()
-{
+StartWindow::~StartWindow() {
     delete ui;
 }
 
-QTimer* StartWindow::loading_animation(QLabel* label, const QString& base_text)
-{
+QTimer* StartWindow::loading_animation(QLabel* label, const QString& base_text) {
     label->setText(base_text);
     QTimer* timer = new QTimer(label);
 
@@ -51,8 +48,7 @@ void StartWindow::on_login_button_clicked() {
     ui->login_error_password->clear();
     ui->login_error->clear();
 
-    if (email.isEmpty() || password.isEmpty())
-    {
+    if (email.isEmpty() || password.isEmpty()) {
         ui->login_error->setText("Заполните все поля");
         return;
     }
@@ -86,8 +82,7 @@ void StartWindow::on_register_button_clicked() {
     ui->register_error_password->clear();
     ui->register_error->clear();
 
-    if (email.isEmpty() || password_1.isEmpty() || password_2.isEmpty())
-    {
+    if (email.isEmpty() || password_1.isEmpty() || password_2.isEmpty()) {
         ui->register_error->setText("Заполните все поля");
         return;
     }
@@ -96,8 +91,7 @@ void StartWindow::on_register_button_clicked() {
     if (!StringHandler::validate_password(password_1, ui->register_error_password)) return;
     if (!StringHandler::validate_password(password_2, ui->register_error_password)) return;
 
-    if (password_1 != password_2)
-    {
+    if (password_1 != password_2) {
         ui->register_error->setText("Пароль должен совпадать");
         return;
     }
