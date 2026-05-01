@@ -13,6 +13,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_switch_automatic_start_toggled(bool checked);
+    void on_switch_stealth_launch_toggled(bool checked);
+
 private:
     std::string token;
     Ui::MainWindow *ui;
