@@ -1,5 +1,9 @@
+#include <filesystem>
+
 #include "ui_main_window.h"
+#include "ui_start_window.h"
 #include "windows/main_window.h"
+#include "windows/start_window.h"
 
 #include "services/jwt.h"
 #include "services/requests.h"
@@ -34,4 +38,16 @@ void MainWindow::on_automatic_start_toggled(bool checked) {
 
 void MainWindow::on_stealth_launch_toggled(bool checked) {
     is_hidden_start = checked;
+}
+
+void MainWindow::on_button_logout_clicked() {
+    if (std::filesystem::exists("data.bin")) {
+        std::filesystem::remove("data.bin");
+
+        auto* start_window = new StartWindow();
+
+        start_window->setAttribute(Qt::WA_DeleteOnClose);
+        start_window->show();
+        this->close();
+    }
 }

@@ -16,6 +16,7 @@ public:
 private slots:
     void on_automatic_start_toggled(bool checked);
     void on_stealth_launch_toggled(bool checked);
+    void on_button_logout_clicked();
 
 private:
     std::string token;
