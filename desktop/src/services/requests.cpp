@@ -1,14 +1,35 @@
-#include <QNetworkReply>
 #include <QEventLoop>
-#include <QUrl>
 #include <QJsonObject>
+#include <QNetworkReply>
 #include <QJsonDocument>
+#include <QUrl>
+
 #include "services/requests.h"
 #include "services/jwt.h"
 
-QString Requests::send_request(const QString& url_str, const QString& email, const QString& password) {
-    auto* manager = new QNetworkAccessManager();
+Requests::Requests(QObject* parent) : QObject(parent) {
+    manager = new QNetworkAccessManager(this);
+}
 
+bool Requests::server_status() {
+    const QNetworkRequest request(QUrl("http://localhost:4000/api"));
+    QNetworkReply *reply = manager->get(request);
+
+    QEventLoop loop;
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    reply->deleteLater();
+
+    if (status == 200) {
+        return true;
+    }
+
+    return false;
+}
+
+QString Requests::submit_authorization(const QString& url_str, const QString& email, const QString& password) {
     const QUrl url(url_str);
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");

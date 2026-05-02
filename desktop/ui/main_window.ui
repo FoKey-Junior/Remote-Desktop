@@ -65,7 +65,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="display_connection_status_2">
+        <widget class="QLabel" name="display_connection_status">
          <property name="font">
           <font>
            <pointsize>10</pointsize>
@@ -110,14 +110,14 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="switch_automatic_start">
+        <widget class="QCheckBox" name="automatic_start">
          <property name="text">
           <string>Запускать при включении системы</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="switch_stealth_launch">
+        <widget class="QCheckBox" name="stealth_launch">
          <property name="text">
           <string>Запускать в скрытом режиме</string>
          </property>

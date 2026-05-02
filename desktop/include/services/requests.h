@@ -1,8 +1,16 @@
 #pragma once
 
-#include <QRegularExpression>
+#include <QObject>
+#include <QString>
+#include <QNetworkAccessManager>
 
-class Requests {
+class Requests : public QObject{
+    Q_OBJECT
 public:
-    static QString send_request(const QString& url_str, const QString& email, const QString& password);
+    explicit Requests(QObject *parent = nullptr);
+    bool server_status();
+    QString submit_authorization(const QString& url_str, const QString& email, const QString& password);
+
+private:
+    QNetworkAccessManager *manager;
 };
