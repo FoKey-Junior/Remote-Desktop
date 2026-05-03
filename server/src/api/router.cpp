@@ -80,8 +80,13 @@ void Router::start_server(int port_server) {
             return crow::response(400);
         }
 
-        const auto result = database->get_command(Jwt::verification_token(body["token"].s()));
-        return result.empty() ? crow::response(404) : crow::response(200, result);
+        const auto result_receiving_command = database->get_command(Jwt::verification_token(body["token"].s()));
+        const auto result_deleting_command = database->delete_command(Jwt::verification_token(body["token"].s()));
+
+        if (result_receiving_command.empty()) return crow::response(404);
+        if (!result_deleting_command) return crow::response(500, "Failed to delete command");
+
+        return crow::response(200, result_receiving_command);
     });
 
     app.port(port_server).multithreaded().run();
