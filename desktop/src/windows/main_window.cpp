@@ -10,7 +10,7 @@
 
 void MainWindow::receiving_commands() {
     command_timer->stop();
-    auto result = requests.get_command(token);
+    const auto result = requests.get_command(token);
 
     if (result.has_value()) {
         std::cout << result.value();

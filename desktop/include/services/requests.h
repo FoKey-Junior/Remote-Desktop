@@ -11,7 +11,7 @@ class Requests : public QObject{
 public:
     explicit Requests(QObject *parent = nullptr);
     bool server_status();
-    QString submit_authorization(const QString& url_str, const QString& email, const QString& password);
+    std::optional<QString> submit_authorization(const QString& url_str, const QString& email, const QString& password);
     std::optional<std::string> get_command(const std::string& token);
 
 private:

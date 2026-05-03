@@ -11,7 +11,7 @@ Requests::Requests(QObject* parent) : QObject(parent) {
     manager = new QNetworkAccessManager(this);
 }
 
-QString Requests::submit_authorization(const QString& url_str, const QString& email, const QString& password) {
+std::optional<QString> Requests::submit_authorization(const QString& url_str, const QString& email, const QString& password) {
     const QUrl url(url_str);
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -31,12 +31,11 @@ QString Requests::submit_authorization(const QString& url_str, const QString& em
     const QString response = reply->readAll();
 
     reply->deleteLater();
-    manager->deleteLater();
 
     if (status == 200) {
         const std::string token = response.toStdString();
         Jwt::save_token(token);
-        return QString("");
+        return std::nullopt;
     }
 
     return response;
