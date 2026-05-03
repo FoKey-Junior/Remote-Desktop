@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <iostream>
 
 #include "ui_main_window.h"
 #include "ui_start_window.h"
@@ -6,7 +7,17 @@
 #include "windows/start_window.h"
 
 #include "services/jwt.h"
-#include "services/requests.h"
+
+void MainWindow::receiving_commands() {
+    command_timer->stop();
+    auto result = requests.get_command(token);
+
+    if (result.has_value()) {
+        std::cout << result.value();
+    }
+
+    command_timer->start(1000);
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,17 +31,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
-    Requests requests;
+
     if (requests.server_status() == true) {
         ui->display_connection_status->setText("Статус сети: подключено к серверу");
     } else {
         ui->display_connection_status->setText("Статус сети: не подключено к серверу");
     }
+
+    command_timer = new QTimer(this);
+    connect(command_timer, &QTimer::timeout, this, &MainWindow::receiving_commands);
+    command_timer->start(1000);
 }
 
 MainWindow::~MainWindow() {
     delete ui;
 }
+
 
 void MainWindow::on_automatic_start_toggled(bool checked) {
     is_automatic_start_enabled = checked;
