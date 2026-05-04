@@ -20,11 +20,10 @@ StartWindow::~StartWindow() {
     delete ui;
 }
 
-QTimer* StartWindow::loading_animation(QLabel* label, const QString& base_text) {
+void StartWindow::loading_animation(QTimer& timer, QLabel* label, const QString& base_text) {
     label->setText(base_text);
-    QTimer* timer = new QTimer(label);
 
-    connect(timer, &QTimer::timeout, this, [label, base_text]() {
+    connect(&timer, &QTimer::timeout, this, [label, base_text]() {
         QString current_text = label->text();
 
         if (current_text.endsWith("...")) {
@@ -34,8 +33,7 @@ QTimer* StartWindow::loading_animation(QLabel* label, const QString& base_text) 
         }
     });
 
-    timer->start(500);
-    return timer;
+    timer.start(500);
 }
 
 void StartWindow::on_login_button_clicked() {
@@ -54,11 +52,10 @@ void StartWindow::on_login_button_clicked() {
     if (!StringHandler::validate_email(email, ui->login_error_email)) return;
     if (!StringHandler::validate_password(password, ui->login_error_password)) return;
 
-    QTimer* anim_timer = loading_animation(ui->login_error, "Запрос отправляется");
+    QTimer animation_timer;
+    loading_animation(animation_timer, ui->login_error, "Запрос отправляется");
     const auto result = requests.submit_authorization("http://localhost:4000/api/authorization", email, password);
-
-    anim_timer->stop();
-    anim_timer->deleteLater();
+    animation_timer.stop();
 
     if (!result.has_value()) {
         auto* main_window = new MainWindow();
@@ -94,11 +91,10 @@ void StartWindow::on_register_button_clicked() {
         return;
     }
 
-    QTimer* anim_timer = loading_animation(ui->register_error, "Запрос отправляется");
+    QTimer animation_timer;
+    loading_animation(animation_timer, ui->register_error, "Запрос отправляется");
     const auto result = requests.submit_authorization("http://localhost:4000/api/registration", email, password_1);
-
-    anim_timer->stop();
-    anim_timer->deleteLater();
+    animation_timer.stop();
 
     if (!result.has_value()) {
         auto* main_window = new MainWindow();

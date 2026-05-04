@@ -21,5 +21,5 @@ private slots:
 
 private:
     Ui::StartWindow* ui;
-    QTimer* loading_animation(QLabel* label, const QString& base_text);
+    void loading_animation(QTimer& timer, QLabel* label, const QString& base_text);
 };
