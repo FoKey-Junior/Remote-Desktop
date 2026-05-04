@@ -1,4 +1,6 @@
-#include "fstream"
+#include <fstream>
+#include <string>
+
 #include "services/jwt.h"
 
 void Jwt::save_token(const std::string& token) {
@@ -7,18 +9,12 @@ void Jwt::save_token(const std::string& token) {
 }
 
 std::string Jwt::get_token() {
-    std::ifstream file("data.bin");
-    std::string token;
+    std::ifstream file_contents("data.bin");
 
-    if (file.is_open()) {
-        if (!std::getline(file, token)) {
-            return "";
-        }
-
-        file.close();
-    } else {
-        return "";
+    if (file_contents.is_open()) {
+        std::string line_contents;
+        if (std::getline(file_contents, line_contents)) { return line_contents; }
     }
 
-    return token;
+    return "";
 }

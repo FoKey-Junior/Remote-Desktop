@@ -28,8 +28,8 @@ private:
     bool is_hidden_start;
 
     Ui::MainWindow *ui;
-
     Requests requests;
-    void display_commands(QTimer* timer, QLabel* label);
     QTimer* command_timer;
+
+    void display_commands(QTimer* timer, QLabel* label);
 };
