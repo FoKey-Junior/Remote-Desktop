@@ -8,15 +8,17 @@
 
 #include "services/jwt.h"
 
-void MainWindow::receiving_commands() {
-    command_timer->stop();
-    const auto result = requests.get_command(token);
+void MainWindow::display_commands(QTimer* timer, QLabel* label) {
+    qDebug() << "запуск дисплея";
+    connect(timer, &QTimer::timeout, this, [label, this]() {
+        if (const auto result = requests.get_command(token); result.has_value()) {
+            label->setText("Список команд: " + QString::fromStdString(result.value()));
+        } else {
+            label->setText("Список команд: пуст");
+        }
+    });
 
-    if (result.has_value()) {
-        std::cout << result.value();
-    }
-
-    command_timer->start(1000);
+    timer->start(1000);
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -38,9 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->display_connection_status->setText("Статус сети: не подключено к серверу");
     }
 
-    command_timer = new QTimer(this);
-    connect(command_timer, &QTimer::timeout, this, &MainWindow::receiving_commands);
-    command_timer->start(1000);
+    QTimer* display_timer = new QTimer(this);
+    display_commands(display_timer, ui->display_commands);
 }
 
 MainWindow::~MainWindow() {
@@ -48,11 +49,11 @@ MainWindow::~MainWindow() {
 }
 
 
-void MainWindow::on_automatic_start_toggled(bool checked) {
+void MainWindow::on_automatic_start_toggled(const bool checked) {
     is_automatic_start_enabled = checked;
 }
 
-void MainWindow::on_stealth_launch_toggled(bool checked) {
+void MainWindow::on_stealth_launch_toggled(const bool checked) {
     is_hidden_start = checked;
 }
 

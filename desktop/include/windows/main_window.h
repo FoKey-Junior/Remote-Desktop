@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QLabel>
 #include <string>
 
 #include "services/requests.h"
@@ -17,9 +18,8 @@ public:
     ~MainWindow() override;
 
 private slots:
-    void receiving_commands();
-    void on_automatic_start_toggled(bool checked);
-    void on_stealth_launch_toggled(bool checked);
+    void on_automatic_start_toggled(const bool checked);
+    void on_stealth_launch_toggled(const bool checked);
     void on_button_logout_clicked();
 
 private:
@@ -30,5 +30,6 @@ private:
     Ui::MainWindow *ui;
 
     Requests requests;
+    void display_commands(QTimer* timer, QLabel* label);
     QTimer* command_timer;
 };
