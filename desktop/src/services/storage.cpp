@@ -2,9 +2,10 @@
 #include <vector>
 #include <string>
 #include <optional>
+
 #include "services/storage.h"
 
-std::optional<std::string> Storage::save(char data, const int line) {
+std::optional<std::string> Storage::save(const std::string& data, const int line) {
     std::vector<std::string> lines_contents;
     std::ifstream file_contents("data.bin");
 
@@ -20,7 +21,7 @@ std::optional<std::string> Storage::save(char data, const int line) {
         lines_contents.push_back("");
     }
 
-    lines_contents[line] = std::string(1, data);
+    lines_contents[line] = data;
 
     std::ofstream outgoing_file("data.bin");
     if (outgoing_file.is_open()) {

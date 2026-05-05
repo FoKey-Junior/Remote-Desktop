@@ -2,7 +2,6 @@
 
 #include <QMainWindow>
 #include <QLabel>
-#include <string>
 
 #include "services/requests.h"
 
@@ -23,7 +22,7 @@ private slots:
     void on_button_logout_clicked();
 
 private:
-    std::string token;
+    std::optional<std::string> token;
     bool is_automatic_start_enabled;
     bool is_hidden_start;
 

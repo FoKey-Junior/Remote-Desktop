@@ -5,7 +5,7 @@
 #include <QUrl>
 
 #include "services/requests.h"
-#include "services/jwt.h"
+#include "services/storage.h"
 
 Requests::Requests(QObject* parent) : QObject(parent) {
     manager = new QNetworkAccessManager(this);
@@ -34,7 +34,7 @@ std::optional<QString> Requests::submit_authorization(const QString& url_str, co
 
     if (status == 200) {
         const std::string token = response.toStdString();
-        Jwt::save_token(token);
+        Storage::save(token, 1);
         return std::nullopt;
     }
 

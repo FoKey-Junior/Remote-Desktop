@@ -4,6 +4,7 @@
 #include <string>
 
 class Storage {
-    static std::optional<std::string> save(char data, int line);
+public:
+    static std::optional<std::string> save(const std::string& data, int line);
     static std::optional<std::string> load(const int line);
 };

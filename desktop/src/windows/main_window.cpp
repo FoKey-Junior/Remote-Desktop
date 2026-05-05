@@ -8,12 +8,12 @@
 #include "windows/main_window.h"
 #include "windows/start_window.h"
 
-#include "services/jwt.h"
+#include "services/storage.h"
 
 void MainWindow::display_commands(QTimer* timer, QLabel* label) {
     qDebug() << "запуск дисплея";
     connect(timer, &QTimer::timeout, this, [label, this]() {
-        if (const auto result = requests.get_command(token); result.has_value()) {
+        if (const auto result = requests.get_command(token.value()); result.has_value()) {
             const QString commnad = QString::fromStdString(result.value());
             label->setText("Список команд: " + commnad);
 
@@ -30,10 +30,7 @@ void MainWindow::display_commands(QTimer* timer, QLabel* label) {
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow) {
-
-    token = Jwt::get_token();
-
-    if (token.empty()) {
+    if (token = Storage::load(0); !token.has_value()) {
         return;
     }
 
