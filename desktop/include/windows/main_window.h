@@ -17,18 +17,18 @@ public:
     ~MainWindow() override;
 
 private slots:
-    void on_automatic_start_toggled(const bool checked);
-    void on_hidden_start_toggled(const bool checked);
+    void on_automatic_start_toggled(bool checked);
+    void on_hidden_start_toggled(bool checked);
     void on_button_logout_clicked();
 
 private:
     std::optional<std::string> token;
-    bool is_automatic_start;
-    bool is_hidden_start;
+    bool is_automatic_start = false;
+    bool is_hidden_start = false;
 
     Ui::MainWindow *ui;
     Requests requests;
-    QTimer* command_timer;
+    QTimer* display_timer{nullptr};
 
     void display_commands(QTimer* timer, QLabel* label);
 };

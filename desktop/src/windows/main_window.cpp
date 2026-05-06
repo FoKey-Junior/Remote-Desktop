@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->display_connection_status->setText("Статус сети: не подключено к серверу");
     }
 
-    QTimer* display_timer = new QTimer(this);
+    display_timer = new QTimer(this);
     display_commands(display_timer, ui->display_commands);
 }
 
