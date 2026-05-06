@@ -34,7 +34,7 @@ std::optional<QString> Requests::submit_authorization(const QString& url_str, co
 
     if (status == 200) {
         const std::string token = response.toStdString();
-        Storage::save(token, 1);
+        Storage::save(token, 0);
         return std::nullopt;
     }
 

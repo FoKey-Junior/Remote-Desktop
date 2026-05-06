@@ -11,7 +11,6 @@
 #include "services/storage.h"
 
 void MainWindow::display_commands(QTimer* timer, QLabel* label) {
-    qDebug() << "запуск дисплея";
     connect(timer, &QTimer::timeout, this, [label, this]() {
         if (const auto result = requests.get_command(token.value()); result.has_value()) {
             const QString commnad = QString::fromStdString(result.value());
@@ -54,10 +53,14 @@ MainWindow::~MainWindow() {
 
 void MainWindow::on_automatic_start_toggled(const bool checked) {
     is_automatic_start_enabled = checked;
+    const std::string value = is_automatic_start_enabled ? "true" : "false";
+    Storage::save(value, 1);
 }
 
 void MainWindow::on_stealth_launch_toggled(const bool checked) {
     is_hidden_start = checked;
+    const std::string value = is_hidden_start ? "true" : "false";
+    Storage::save(value, 2);
 }
 
 void MainWindow::on_button_logout_clicked() {
