@@ -1,5 +1,7 @@
 #include <filesystem>
 #include <iostream>
+#include <sstream>
+
 #include <QProcess>
 #include <QString>
 
@@ -35,6 +37,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
+    if (const auto string_automatic_start = Storage::load(1); string_automatic_start.has_value()) {
+        std::istringstream(*string_automatic_start) >> std::boolalpha >> is_automatic_start;
+        ui->automatic_start->setChecked(is_automatic_start);
+        qDebug() << is_automatic_start;
+    }
+
+    if (const auto string_hidden_start = Storage::load(2); string_hidden_start.has_value()) {
+        std::istringstream(*string_hidden_start) >> std::boolalpha >> is_hidden_start;
+        ui->hidden_start->setChecked(is_hidden_start);
+        qDebug() << is_hidden_start;
+    }
 
     if (requests.server_status() == true) {
         ui->display_connection_status->setText("Статус сети: подключено к серверу");
@@ -52,12 +65,12 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::on_automatic_start_toggled(const bool checked) {
-    is_automatic_start_enabled = checked;
-    const std::string value = is_automatic_start_enabled ? "true" : "false";
+    is_automatic_start = checked;
+    const std::string value = is_automatic_start ? "true" : "false";
     Storage::save(value, 1);
 }
 
-void MainWindow::on_stealth_launch_toggled(const bool checked) {
+void MainWindow::on_hidden_start_toggled(const bool checked) {
     is_hidden_start = checked;
     const std::string value = is_hidden_start ? "true" : "false";
     Storage::save(value, 2);

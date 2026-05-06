@@ -18,12 +18,12 @@ public:
 
 private slots:
     void on_automatic_start_toggled(const bool checked);
-    void on_stealth_launch_toggled(const bool checked);
+    void on_hidden_start_toggled(const bool checked);
     void on_button_logout_clicked();
 
 private:
     std::optional<std::string> token;
-    bool is_automatic_start_enabled;
+    bool is_automatic_start;
     bool is_hidden_start;
 
     Ui::MainWindow *ui;

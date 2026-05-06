@@ -117,7 +117,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="stealth_launch">
+        <widget class="QCheckBox" name="hidden_start">
          <property name="text">
           <string>Запускать в скрытом режиме</string>
          </property>
