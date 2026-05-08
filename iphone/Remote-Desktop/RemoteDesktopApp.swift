@@ -21,7 +21,7 @@ struct RemoteDesktopApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(networkService: networkService)
-                .preferredColorScheme(.dark)
+                .tint(.blue)
         }
     }
 }
