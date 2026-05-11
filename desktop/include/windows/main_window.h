@@ -4,6 +4,7 @@
 #include <QLabel>
 
 #include "services/requests.h"
+#include "services/storage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,13 +23,14 @@ private slots:
     void on_button_logout_clicked();
 
 private:
-    std::optional<std::string> token;
+    std::string token;
     bool is_automatic_start = false;
     bool is_hidden_start = false;
 
     Ui::MainWindow *ui;
-    Requests requests;
     QTimer* display_timer{nullptr};
+    Requests requests;
+    Storage storage;
 
     void display_commands(QTimer* timer, QLabel* label);
 };

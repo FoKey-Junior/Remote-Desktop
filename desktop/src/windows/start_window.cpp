@@ -8,8 +8,6 @@
 #include "services/string_handler.h"
 #include "services/requests.h"
 
-Requests requests;
-
 StartWindow::StartWindow(QWidget* parent)
     : QMainWindow(parent)
       , ui(new Ui::StartWindow) {
@@ -54,6 +52,7 @@ void StartWindow::on_login_button_clicked() {
 
     QTimer animation_timer;
     loading_animation(animation_timer, ui->login_error, "Запрос отправляется");
+    Requests requests;
     const auto result = requests.submit_authorization("http://localhost:4000/api/authorization", email, password);
     animation_timer.stop();
 
@@ -93,6 +92,7 @@ void StartWindow::on_register_button_clicked() {
 
     QTimer animation_timer;
     loading_animation(animation_timer, ui->register_error, "Запрос отправляется");
+    Requests requests;
     const auto result = requests.submit_authorization("http://localhost:4000/api/registration", email, password_1);
     animation_timer.stop();
 

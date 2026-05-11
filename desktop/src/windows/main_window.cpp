@@ -14,7 +14,7 @@
 
 void MainWindow::display_commands(QTimer* timer, QLabel* label) {
     connect(timer, &QTimer::timeout, this, [label, this]() {
-        if (const auto result = requests.get_command(token.value()); result.has_value()) {
+        if (const auto result = requests.get_command(token); result.has_value()) {
             const QString commnad = QString::fromStdString(result.value());
             label->setText("Список команд: " + commnad);
 
@@ -31,22 +31,23 @@ void MainWindow::display_commands(QTimer* timer, QLabel* label) {
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow) {
-    if (token = Storage::load(0); !token.has_value()) {
+
+    if (const std::optional<std::string> token_swap = storage.load(0); token_swap.has_value()) {
+        token = token_swap.value();
+    } else {
         return;
     }
 
     ui->setupUi(this);
 
-    if (const auto string_automatic_start = Storage::load(1); string_automatic_start.has_value()) {
+    if (const auto string_automatic_start = storage.load(1); string_automatic_start.has_value()) {
         std::istringstream(*string_automatic_start) >> std::boolalpha >> is_automatic_start;
         ui->automatic_start->setChecked(is_automatic_start);
-        qDebug() << is_automatic_start;
     }
 
-    if (const auto string_hidden_start = Storage::load(2); string_hidden_start.has_value()) {
+    if (const auto string_hidden_start = storage.load(2); string_hidden_start.has_value()) {
         std::istringstream(*string_hidden_start) >> std::boolalpha >> is_hidden_start;
         ui->hidden_start->setChecked(is_hidden_start);
-        qDebug() << is_hidden_start;
     }
 
     if (requests.server_status() == true) {
@@ -67,13 +68,19 @@ MainWindow::~MainWindow() {
 void MainWindow::on_automatic_start_toggled(const bool checked) {
     is_automatic_start = checked;
     const std::string value = is_automatic_start ? "true" : "false";
-    Storage::save(value, 1);
+
+    if (storage.save(value, 1)) {
+        return;
+    }
 }
 
 void MainWindow::on_hidden_start_toggled(const bool checked) {
     is_hidden_start = checked;
     const std::string value = is_hidden_start ? "true" : "false";
-    Storage::save(value, 2);
+
+    if (storage.save(value, 2)) {
+        return;
+    }
 }
 
 void MainWindow::on_button_logout_clicked() {

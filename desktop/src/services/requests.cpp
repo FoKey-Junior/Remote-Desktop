@@ -33,12 +33,14 @@ std::optional<QString> Requests::submit_authorization(const QString& url_str, co
     reply->deleteLater();
 
     if (status == 200) {
+        Storage storage;
         const std::string token = response.toStdString();
-        Storage::save(token, 0);
+
+        storage.save(token, 0);
         return std::nullopt;
     }
 
-    return response;
+    return std::nullopt;
 }
 
 bool Requests::server_status() {
