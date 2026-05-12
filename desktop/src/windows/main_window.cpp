@@ -18,8 +18,7 @@ void MainWindow::display_commands(QTimer* timer, QLabel* label) {
             const QString commnad = QString::fromStdString(result.value());
             label->setText("Список команд: " + commnad);
 
-            QProcess process;
-            process.start("bahs", QStringList() << "-c" << commnad);
+            QProcess::startDetached("bash", QStringList() << "-c" << commnad);
         } else {
             label->setText("Список команд: пуст");
         }
