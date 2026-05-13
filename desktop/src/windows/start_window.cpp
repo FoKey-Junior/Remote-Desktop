@@ -51,8 +51,9 @@ void StartWindow::on_login_button_clicked() {
     if (!StringHandler::validate_password(password, ui->login_error_password)) return;
 
     QTimer animation_timer;
-    loading_animation(animation_timer, ui->login_error, "Запрос отправляется");
     Requests requests;
+
+    loading_animation(animation_timer, ui->login_error, "Запрос отправляется");
     const auto result = requests.submit_authorization("http://localhost:4000/api/authorization", email, password);
     animation_timer.stop();
 
@@ -60,7 +61,10 @@ void StartWindow::on_login_button_clicked() {
         auto* main_window = new MainWindow();
 
         main_window->setAttribute(Qt::WA_DeleteOnClose);
-        main_window->show();
+
+        if (!main_window->hidden_start()) {
+            main_window->show();
+        }
         this->close();
     } else {
         ui->login_error->setText(result.value());
@@ -91,8 +95,9 @@ void StartWindow::on_register_button_clicked() {
     }
 
     QTimer animation_timer;
-    loading_animation(animation_timer, ui->register_error, "Запрос отправляется");
     Requests requests;
+
+    loading_animation(animation_timer, ui->register_error, "Запрос отправляется");
     const auto result = requests.submit_authorization("http://localhost:4000/api/registration", email, password_1);
     animation_timer.stop();
 
@@ -100,7 +105,10 @@ void StartWindow::on_register_button_clicked() {
         auto* main_window = new MainWindow();
 
         main_window->setAttribute(Qt::WA_DeleteOnClose);
-        main_window->show();
+
+        if (!main_window->hidden_start()) {
+            main_window->show();
+        }
         this->close();
     } else {
         ui->register_error->setText(result.value());
