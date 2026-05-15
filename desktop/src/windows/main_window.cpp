@@ -1,7 +1,4 @@
-#include <filesystem>
-#include <iostream>
 #include <sstream>
-
 
 #include <QCoreApplication>
 #include <QDir>
@@ -23,10 +20,10 @@
 void MainWindow::display_commands(QTimer* timer, QLabel* label) {
     connect(timer, &QTimer::timeout, this, [label, this]() {
         if (const auto result = requests.get_command(token); result.has_value()) {
-            const QString commnad = QString::fromStdString(result.value());
-            label->setText("Список команд: " + commnad);
+            const QString command = QString::fromStdString(result.value());
+            label->setText("Список команд: " + command);
 
-            QProcess::startDetached("bash", QStringList() << "-c" << commnad);
+            QProcess::startDetached("bash", QStringList() << "-c" << command);
         } else {
             label->setText("Список команд: пуст");
         }
@@ -57,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->hidden_start->setChecked(is_hidden_start);
     }
 
-    if (requests.server_status() == true) {
+    if (requests.server_status()) {
         ui->display_connection_status->setText("Статус сети: подключено к серверу");
     } else {
         ui->display_connection_status->setText("Статус сети: не подключено к серверу");
@@ -171,8 +168,11 @@ void MainWindow::on_hidden_start_toggled(const bool checked) {
 }
 
 void MainWindow::on_button_logout_clicked() {
-    if (std::filesystem::exists("data.bin")) {
-        std::filesystem::remove("data.bin");
+    const QString config_dir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    const QString data_file = config_dir + "/data.bin";
+
+    if (QFile::exists(data_file)) {
+        QFile::remove(data_file);
 
         auto* start_window = new StartWindow();
 

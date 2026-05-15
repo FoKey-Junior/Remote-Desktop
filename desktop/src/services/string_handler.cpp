@@ -1,4 +1,3 @@
-#include <QJsonObject>
 #include "services/string_handler.h"
 
 void StringHandler::set_error(QLabel* label, const QString& message) {

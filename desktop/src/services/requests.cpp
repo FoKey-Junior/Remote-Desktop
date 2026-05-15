@@ -40,7 +40,7 @@ std::optional<QString> Requests::submit_authorization(const QString& url_str, co
         return std::nullopt;
     }
 
-    return std::nullopt;
+    return response.isEmpty() ? QString("Ошибка сервера") : response;
 }
 
 bool Requests::server_status() {

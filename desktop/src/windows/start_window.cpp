@@ -1,5 +1,3 @@
-#include <qdatetime.h>
-
 #include "ui_start_window.h"
 #include "ui_main_window.h"
 #include "windows/start_window.h"
