@@ -12,9 +12,9 @@ struct RemoteDesktopApp: App {
     
     // MARK: - Dependencies
     
-    /// Сетевой сервис — по умолчанию используется Mock-реализация.
-    /// Для подключения к реальному серверу замените на RealNetworkService().
-    private let networkService: NetworkServiceProtocol = MockNetworkService()
+    /// Сетевой сервис — подключение к реальному C++ Crow API серверу.
+    /// Для автономной работы без сервера замените на MockNetworkService().
+    private let networkService: NetworkServiceProtocol = RealNetworkService()
     
     // MARK: - Body
     

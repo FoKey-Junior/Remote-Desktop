@@ -3,6 +3,7 @@
 //
 // Протокол сетевого сервиса.
 // Определяет контракт для всех реализаций (Mock и Real).
+// Соответствует API сервера: plain text ответы, token в body.
 
 import Foundation
 
@@ -14,31 +15,27 @@ protocol NetworkServiceProtocol {
     
     /// Авторизация пользователя
     /// - Parameters:
-    ///   - email: Email или логин пользователя
+    ///   - email: Email пользователя
     ///   - password: Пароль
-    /// - Returns: Ответ с JWT-токеном
-    func login(email: String, password: String) async throws -> AuthResponse
+    /// - Returns: JWT-токен (plain text строка от сервера)
+    func login(email: String, password: String) async throws -> String
     
     /// Регистрация нового пользователя
     /// - Parameters:
-    ///   - email: Email или логин
+    ///   - email: Email пользователя
     ///   - password: Пароль
-    /// - Returns: Ответ с JWT-токеном
-    func register(email: String, password: String) async throws -> AuthResponse
+    /// - Returns: JWT-токен (plain text строка от сервера)
+    func register(email: String, password: String) async throws -> String
     
-    /// Получение списка доступных команд
-    /// - Returns: Массив команд
-    func fetchCommands() async throws -> [Command]
+    /// Отправка команды на сервер для удалённого ПК
+    /// - Parameters:
+    ///   - token: JWT-токен авторизации
+    ///   - command: Текст команды
+    func sendCommand(token: String, command: String) async throws
     
-    /// Добавление новой команды
-    /// - Parameter name: Название команды
-    /// - Returns: Созданная команда
-    func addCommand(name: String) async throws -> Command
-    
-    /// Выполнение команды на удалённом ПК
-    /// - Parameter command: Команда для выполнения
-    /// - Returns: Результат выполнения
-    func executeCommand(_ command: Command) async throws -> CommandExecutionResponse
+    /// Проверка связи с сервером (GET /api)
+    /// - Returns: true если сервер доступен
+    func checkServer() async throws -> Bool
 }
 
 // MARK: - Network Errors
@@ -48,8 +45,11 @@ enum NetworkError: LocalizedError {
     case invalidURL
     case invalidResponse
     case unauthorized
+    case conflict(String)
+    case validationError(String)
+    case notFound(String)
     case serverError(String)
-    case decodingError
+    case connectionFailed
     case unknown
     
     var errorDescription: String? {
@@ -59,11 +59,17 @@ enum NetworkError: LocalizedError {
         case .invalidResponse:
             return "Некорректный ответ сервера"
         case .unauthorized:
-            return "Необходима авторизация"
+            return "Неверный email или пароль"
+        case .conflict(let message):
+            return message
+        case .validationError(let message):
+            return message
+        case .notFound(let message):
+            return message
         case .serverError(let message):
             return "Ошибка сервера: \(message)"
-        case .decodingError:
-            return "Ошибка обработки данных"
+        case .connectionFailed:
+            return "Не удалось подключиться к серверу"
         case .unknown:
             return "Неизвестная ошибка"
         }

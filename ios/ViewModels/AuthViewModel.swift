@@ -50,11 +50,11 @@ final class AuthViewModel: ObservableObject {
             defer { isLoading = false }
             
             do {
-                let response = try await networkService.login(
+                let jwtToken = try await networkService.login(
                     email: email.trimmingCharacters(in: .whitespacesAndNewlines),
                     password: password
                 )
-                token = response.token
+                token = jwtToken
             } catch {
                 showErrorMessage(error.localizedDescription)
             }
@@ -73,11 +73,11 @@ final class AuthViewModel: ObservableObject {
             defer { isLoading = false }
             
             do {
-                let response = try await networkService.register(
+                let jwtToken = try await networkService.register(
                     email: email.trimmingCharacters(in: .whitespacesAndNewlines),
                     password: password
                 )
-                token = response.token
+                token = jwtToken
             } catch {
                 showErrorMessage(error.localizedDescription)
             }
