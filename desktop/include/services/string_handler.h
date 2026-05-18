@@ -1,12 +1,10 @@
 #pragma once
 
-#include <QLabel>
+#include <QString>
+#include <optional>
 
 class StringHandler {
 public:
-    static bool validate_email(const QString& email, QLabel* error_label);
-    static bool validate_password(const QString& password, QLabel* error_label);
-
-private:
-    static void set_error(QLabel* label, const QString& message);
+    static std::optional<QString> validate_email(const QString& email);
+    static std::optional<QString> validate_password(const QString& password);
 };

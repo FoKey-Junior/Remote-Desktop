@@ -78,7 +78,7 @@ MainWindow::~MainWindow() {
 void MainWindow::on_automatic_start_toggled(const bool checked) {
     is_automatic_start = checked;
     const std::string value = is_automatic_start ? "true" : "false";
-    storage.save(value, 1);
+    (void)storage.save(value, 1);
 
     const QString autostart_dir = QDir::homePath() + "/.config/autostart";
     const QString desktop_file = autostart_dir + "/remote_desktop_client.desktop";
@@ -156,7 +156,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 void MainWindow::on_hidden_start_toggled(const bool checked) {
     is_hidden_start = checked;
     const std::string value = is_hidden_start ? "true" : "false";
-    storage.save(value, 2);
+    (void)storage.save(value, 2);
 
     if (!tray_icon) return;
 

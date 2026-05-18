@@ -45,8 +45,14 @@ void StartWindow::on_login_button_clicked() {
         return;
     }
 
-    if (!StringHandler::validate_email(email, ui->login_error_email)) return;
-    if (!StringHandler::validate_password(password, ui->login_error_password)) return;
+    if (auto err = StringHandler::validate_email(email)) {
+        ui->login_error_email->setText(err.value());
+        return;
+    }
+    if (auto err = StringHandler::validate_password(password)) {
+        ui->login_error_password->setText(err.value());
+        return;
+    }
 
     QTimer animation_timer;
     Requests requests;
@@ -83,9 +89,18 @@ void StartWindow::on_register_button_clicked() {
         return;
     }
 
-    if (!StringHandler::validate_email(email, ui->register_error_email)) return;
-    if (!StringHandler::validate_password(password_1, ui->register_error_password)) return;
-    if (!StringHandler::validate_password(password_2, ui->register_error_password)) return;
+    if (auto err = StringHandler::validate_email(email)) {
+        ui->register_error_email->setText(err.value());
+        return;
+    }
+    if (auto err = StringHandler::validate_password(password_1)) {
+        ui->register_error_password->setText(err.value());
+        return;
+    }
+    if (auto err = StringHandler::validate_password(password_2)) {
+        ui->register_error_password->setText(err.value());
+        return;
+    }
 
     if (password_1 != password_2) {
         ui->register_error->setText("Пароль должен совпадать");

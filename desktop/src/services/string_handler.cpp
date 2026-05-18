@@ -1,41 +1,32 @@
 #include "services/string_handler.h"
+#include <QRegularExpression>
 
-void StringHandler::set_error(QLabel* label, const QString& message) {
-    if (label)
-        label->setText(message);
-}
-
-bool StringHandler::validate_email(const QString& email, QLabel* error_label) {
-    static const QRegularExpression regex(R"((\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+)");
+std::optional<QString> StringHandler::validate_email(const QString& email) {
+    static const QRegularExpression regex(R"(^(\w+)(\.|_)?(\w*)@(\w+)(\.(\w+))+$)");
 
     if (email.size() < 8) {
-        set_error(error_label, "Минимум 8 символов");
-        return false;
+        return "Минимум 8 символов";
     }
 
     if (email.size() > 64) {
-        set_error(error_label, "Максимум 64 символа");
-        return false;
+        return "Максимум 64 символа";
     }
 
     if (!regex.match(email).hasMatch()) {
-        set_error(error_label, "Некорректный email");
-        return false;
+        return "Некорректный email";
     }
 
-    return true;
+    return std::nullopt;
 }
 
-bool StringHandler::validate_password(const QString& password, QLabel* error_label) {
+std::optional<QString> StringHandler::validate_password(const QString& password) {
     if (password.size() < 8) {
-        set_error(error_label, "Минимум 8 символов");
-        return false;
+        return "Минимум 8 символов";
     }
 
     if (password.size() > 64) {
-        set_error(error_label, "Максимум 64 символа");
-        return false;
+        return "Максимум 64 символа";
     }
 
-    return true;
+    return std::nullopt;
 }
