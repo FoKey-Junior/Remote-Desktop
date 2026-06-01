@@ -4,7 +4,7 @@
 
 # Remote Desktop & API Server
 
-**Remote Desktop** — это система для удалённого управления устройствами, сочетающая в себе кроссплатформенный графический интерфейс на **Qt 6** и высокопроизводительную серверную часть на **C++20** с использованием фреймворка **Crow**.
+**Remote Desktop** is a remote device management system that combines a cross-platform graphical user interface built with **Qt 6** and a high-performance **C++20** backend powered by the **Crow** framework.
 
 [![C++](https://img.shields.io/badge/C++-20-00599C?style=flat-square&logo=c%2B%2B)](https://isocpp.org/)
 [![Qt](https://img.shields.io/badge/Qt-6-41CD52?style=flat-square&logo=qt)](https://www.qt.io/)
@@ -13,52 +13,52 @@
 
 ---
 
-## О проекте
+## About the Project
 
-В данном репозитории представлена **серверная часть (REST API)** проекта. 
+This repository contains the **backend component (REST API)** of the project. 
 
-> **Статус разработки:** Основное клиентское Qt-приложение, позволяющее отправлять команды на десктоп со смартфона из любой точки мира, находится в процессе подготовки и будет загружено в ближайшее время.
-
----
-
-## Архитектура системы
-
-Проект разделен на два ключевых компонента:
-
-### Серверная часть (Backend)
-* **Ядро:** Написано на чистом **C++20** для обеспечения высокой производительности.
-* **REST API:** Построено на базе легковесного фреймворка **Crow** для обработки HTTP-запросов и маршрутизации.
-* **Безопасность:** Интеграция с **libsodium** для криптографической защиты, безопасного хэширования и хранения конфиденциальных данных.
-* **Данные:** Поддержка JSON (встроенные возможности Crow) для обмена данными между клиентом и сервером.
-
-### Клиентская часть (Frontend / Qt)
-* **Интерфейс:** Графический интерфейс для авторизации, регистрации и управления подключёнными устройствами.
-* **Связь:** Взаимодействие с сервером посредством HTTP/REST запросов.
-* **Кроссплатформенность:** Полная поддержка операционных систем Linux, macOS и Windows.
+> **Development Status:** The main Qt client application, which enables you to send commands to your desktop from a smartphone anywhere in the world, is currently in development and will be uploaded soon.
 
 ---
 
-## Технологический стек
+## System Architecture
 
-| Технология | Назначение |
+The project is divided into two key components:
+
+### Server-Side (Backend)
+* **Core:** Written in pure **C++20** to ensure high performance.
+* **REST API:** Built on the lightweight **Crow** framework for routing and handling HTTP requests.
+* **Security:** Integrated with **libsodium** for cryptographic protection, secure hashing, and sensitive data storage.
+* **Data:** JSON support (native to Crow) for data exchange between the client and the server.
+
+### Client-Side (Frontend / Qt)
+* **Interface:** A graphical user interface for authentication, registration, and managing connected devices.
+* **Communication:** Interacts with the server via HTTP/REST requests.
+* **Cross-Platform Compatibility:** Full support for Linux, macOS, and Windows operating systems.
+
+---
+
+## Tech Stack
+
+| Technology | Purpose |
 | :--- | :--- |
-| **C++20** | Современный стандарт, обеспечивающий скорость и стабильность серверной логики |
-| **Crow Framework** | Легковесный HTTP-сервер для создания REST API на C++ |
-| **Qt 6** | Кроссплатформенная разработка UI и логики клиентского приложения |
-| **libsodium** | Библиотека для шифрования, защиты данных и сессий |
-| **PostgreSQL** | *(В планах)* Реляционная база данных для хранения пользователей и сессий |
+| **C++20** | Modern standard ensuring the speed and stability of the server logic |
+| **Crow Framework** | Lightweight HTTP server for building C++ REST APIs |
+| **Qt 6** | Cross-platform UI development and client application logic |
+| **libsodium** | Library for encryption, data protection, and session security |
+| **PostgreSQL** | *(Planned)* Relational database for storing users and sessions |
 
 ---
 
-## Ключевые возможности
+## Key Features
 
-* **Безопасная аутентификация:** Регистрация и авторизация пользователей через Qt-приложение.
-* **RESTful взаимодействие:** Чётко структурированный обмен данными в формате клиент-сервер.
-* **Удалённое управление:** Выполнение команд на целевом десктопном устройстве.
-* **Масштабируемость:** Архитектура сервера спроектирована с расчётом на одновременное подключение множества клиентов.
+* **Secure Authentication:** User registration and login via the Qt application.
+* **RESTful Communication:** Well-structured client-server data exchange.
+* **Remote Management:** Execution of commands on the target desktop device.
+* **Scalability:** The server architecture is designed to handle multiple simultaneous client connections.
 
 ---
 
-## Цель проекта
+## Project Goal
 
-Создать безопасную, гибкую и независимую от сторонних облачных сервисов экосистему удалённого управления. Проект может быть адаптирован под задачи IoT (интернета вещей), системного администрирования или обмена командами между устройствами в закрытых сетях.
+To build a secure, flexible remote management ecosystem that is independent of third-party cloud services. The project can be adapted for IoT (Internet of Things) applications, system administration, or exchanging commands between devices in closed networks.
