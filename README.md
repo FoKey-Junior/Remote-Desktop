@@ -4,7 +4,7 @@
 
 # Remote Desktop & API Server
 
-**Remote Desktop** is a remote device management system that combines a cross-platform graphical user interface built with **Qt 6** and a high-performance **C++20** backend powered by the **Crow** framework.
+**Remote Desktop** is a remote device management system that combines a cross-platform graphical user interface built with **Qt 6** and a high-performance **C++20** backend powered by the **Boost.Beast** framework.
 
 [![C++](https://img.shields.io/badge/C++-20-00599C?style=flat-square&logo=c%2B%2B)](https://isocpp.org/)
 [![Qt](https://img.shields.io/badge/Qt-6-41CD52?style=flat-square&logo=qt)](https://www.qt.io/)
